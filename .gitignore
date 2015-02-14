@@ -1,0 +1,26 @@
+Temp/
+Obj/
+UnityGenerated/
+Library/
+ExportedObj/
+Build/
+*.svd
+*.userprefs
+*.csproj
+*.pidb
+*.suo
+*.sln
+*.user
+*.unityproj
+*.booproj
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+Indirect Assets/Dungeon Game.cartographer/Export Bookmark
+
+!Assets/Packages/**/Library
