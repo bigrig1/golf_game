@@ -62,7 +62,6 @@ public class GGArrowComponent: MonoBehaviour {
 	
 	public void SetPosition(Vector2 origin, Vector2 tip) {
 		var angle                            = Mathf.Atan2(tip.y - origin.y, tip.x - origin.x) * Mathf.Rad2Deg - 90.0f;
-		var vector                           = tip - origin;
 		var bodyLength                       = Mathf.Max(0.0f, (tip - origin).magnitude - GGArrowComponent.headHeight);
 		this.head.transform.localPosition    = tip;
 		this.body.transform.localPosition    = origin;

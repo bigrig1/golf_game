@@ -8,7 +8,7 @@ using UnityEngine;
 public class GGInputComponent: MonoBehaviour {
 	/* Managing state. */
 	
-	// Where the touch or click began as well as the input for the current frame in screen space.
+	// Where the touch or click began as well as the input for the current frame in world space.
 	// Will be null if the user is not touching or clicking.
 	private Vector2? inputOrigin;
 	private Vector2? currentInput;
@@ -34,17 +34,20 @@ public class GGInputComponent: MonoBehaviour {
 	
 	private void UpdateMouseInput() {
 		if (Input.GetMouseButton(0)) {
-			this.currentInput = Input.mousePosition;
+			this.currentInput = this.ConvertInputToWorldSpace(Input.mousePosition);
 			
 			if (!this.inputOrigin.HasValue) {
 				this.inputOrigin = this.currentInput;
 			}
 			
-			var vector    = this.currentInput.Value - this.inputOrigin.Value;
-			var threshold = GGInputComponent.inputThreshold;
+			var inputVector = this.inputOrigin.Value - this.currentInput.Value;
+			var magnitude   = inputVector.magnitude;
 			
-			if (Mathf.Abs(vector.x) < threshold && Mathf.Abs(vector.y) < threshold) {
+			if (magnitude < GGInputComponent.minInputThreshold) {
 				this.currentInput = null;
+			}
+			else if (magnitude > GGInputComponent.maxInputThreshold) {
+				this.currentInput = this.inputOrigin.Value - inputVector.normalized * GGInputComponent.maxInputThreshold;
 			}
 		}
 		else {
@@ -63,8 +66,8 @@ public class GGInputComponent: MonoBehaviour {
 		var arrow = GGGameSceneComponent.instance.arrow;
 		
 		if (this.inputOrigin.HasValue && this.currentInput.HasValue) {
-			var inputOrigin    = this.ConvertInputToWorldSpace(this.inputOrigin.Value);
-			var currentInput   = this.ConvertInputToWorldSpace(this.currentInput.Value);
+			var inputOrigin    = this.inputOrigin.Value;
+			var currentInput   = this.currentInput.Value;
 			var inputMagnitude = currentInput - inputOrigin;
 			var arrowComponent = GGGameSceneComponent.instance.arrowComponent;
 			arrow.SetActive(true);
@@ -78,7 +81,7 @@ public class GGInputComponent: MonoBehaviour {
 	/* Shooting. */
 	
 	private void Shoot() {
-		GGGameSceneComponent.instance.ShootBall(this.ConvertInputToWorldSpace(this.inputOrigin.Value) - this.ConvertInputToWorldSpace(this.currentInput.Value));
+		GGGameSceneComponent.instance.ShootBall(this.inputOrigin.Value - this.currentInput.Value);
 	}
 	
 	/* Helpers. */
@@ -89,7 +92,7 @@ public class GGInputComponent: MonoBehaviour {
 	
 	/* Getting configuration values. */
 	
-	// The distance that the input must be dragged from the origin on either axis in screen space
-	// (pixels) before it's considered a valid input.
-	public const float inputThreshold = 4.0f;
+	// The minimum and maximum magnitudes of the input vector in screen space (pixels).
+	public const float minInputThreshold = 0.5f;
+	public const float maxInputThreshold = 8.0f;
 }
