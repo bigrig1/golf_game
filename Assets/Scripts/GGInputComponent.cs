@@ -94,5 +94,5 @@ public class GGInputComponent: MonoBehaviour {
 	
 	// The minimum and maximum magnitudes of the input vector in screen space (pixels).
 	public const float minInputThreshold = 0.5f;
-	public const float maxInputThreshold = 8.0f;
+	public const float maxInputThreshold = 9.0f;
 }

@@ -9,8 +9,10 @@ public class GGArrowComponent: MonoBehaviour {
 	/* Initializing. */
 	
 	public void Start() {
-		this.head = this.transform.Find("Head").gameObject;
-		this.body = this.transform.Find("Body").gameObject;
+		this.head                         = this.transform.Find("Head").gameObject;
+		this.body                         = this.transform.Find("Body").gameObject;
+		this.head.renderer.material.color = GGArrowComponent.color;
+		this.body.renderer.material.color = GGArrowComponent.color;
 		this.GenerateHeadMesh();
 		this.GenerateBodyMesh();
 	}
@@ -78,7 +80,8 @@ public class GGArrowComponent: MonoBehaviour {
 	
 	/* Getting configuration values. */
 	
-	public const float headWidth     = 0.6f;
-	public const float headHeight    = 0.475f;
-	public const float bodyThickness = 0.115f;
+	public static Color color         = new Color(0.29f, 0.53f, 0.92f);
+	public const  float headWidth     = 0.6f;
+	public const  float headHeight    = 0.475f;
+	public const  float bodyThickness = 0.115f;
 }
