@@ -1,5 +1,5 @@
 //
-// The component that manages the game scene.
+// The component that manages the game scene and the overall game logic.
 //
 
 using System.Collections;
@@ -26,6 +26,9 @@ public class GGGameSceneComponent: MonoBehaviour {
 				case "Arrow": this.arrow = child; break;
 			}
 		}
+		
+		this.ballRigidbody  = this.ball.rigidbody;
+		this.arrowComponent = this.arrow.GetComponent<GGArrowComponent>();
 	}
 	
 	/* Accessing the component. */
@@ -40,6 +43,12 @@ public class GGGameSceneComponent: MonoBehaviour {
 	
 	private static GGGameSceneComponent _instance;
 	
+	/* Shooting the ball. */
+	
+	public void ShootBall(Vector2 inputVector) {
+		this.ballRigidbody.AddForce(inputVector * GGGameSceneComponent.inputForce, ForceMode.Impulse);
+	}
+	
 	/* Accessing game objects and components. */
 	
 	// The ball object.
@@ -49,4 +58,16 @@ public class GGGameSceneComponent: MonoBehaviour {
 	// The arrow object.
 	[HideInInspector]
 	public GameObject arrow;
+	
+	// The ball's rigidbody component.
+	public Rigidbody ballRigidbody { get; private set; }
+	
+	// The arrow object's arrow component.
+	public GGArrowComponent arrowComponent { get; private set; }
+	
+	/* Getting configuration values. */
+	
+	// A multiplier that gets applied to the input vector to determine the amount of force to use
+	// when shooting the ball.
+	public const float inputForce = 2.25f;
 }

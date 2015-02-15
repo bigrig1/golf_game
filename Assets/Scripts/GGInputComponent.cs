@@ -15,14 +15,16 @@ public class GGInputComponent: MonoBehaviour {
 	
 	/* Updating. */
 	
-	public void FixedUpdate() {
+	public void Update() {
 		if (Input.touchSupported) {
 			this.UpdateTouchInput();
 		}
 		else {
 			this.UpdateMouseInput();
 		}
-		
+	}
+	
+	public void FixedUpdate() {
 		this.UpdateArrow();
 	}
 	
@@ -46,8 +48,8 @@ public class GGInputComponent: MonoBehaviour {
 			}
 		}
 		else {
-			if (Input.GetMouseButtonUp(0)) {
-				this.Shoot(Input.mousePosition);
+			if (Input.GetMouseButtonUp(0) && this.inputOrigin.HasValue && this.currentInput.HasValue) {
+				this.Shoot();
 			}
 			
 			this.inputOrigin  = null;
@@ -61,13 +63,10 @@ public class GGInputComponent: MonoBehaviour {
 		var arrow = GGGameSceneComponent.instance.arrow;
 		
 		if (this.inputOrigin.HasValue && this.currentInput.HasValue) {
-			var camera         = Camera.main;
-			var inputOrigin    = camera.ScreenToWorldPoint(this.inputOrigin.Value);
-			var currentInput   = camera.ScreenToWorldPoint(this.currentInput.Value);
-			inputOrigin.z      = 0.0f;
-			currentInput.z     = 0.0f;
+			var inputOrigin    = this.ConvertInputToWorldSpace(this.inputOrigin.Value);
+			var currentInput   = this.ConvertInputToWorldSpace(this.currentInput.Value);
 			var inputMagnitude = currentInput - inputOrigin;
-			var arrowComponent = arrow.GetComponent<GGArrowComponent>();
+			var arrowComponent = GGGameSceneComponent.instance.arrowComponent;
 			arrow.SetActive(true);
 			arrowComponent.SetPosition(inputOrigin, inputOrigin - inputMagnitude);
 		}
@@ -78,8 +77,14 @@ public class GGInputComponent: MonoBehaviour {
 	
 	/* Shooting. */
 	
-	private void Shoot(Vector2 input) {
-		Debug.Log("SHOOT");
+	private void Shoot() {
+		GGGameSceneComponent.instance.ShootBall(this.ConvertInputToWorldSpace(this.inputOrigin.Value) - this.ConvertInputToWorldSpace(this.currentInput.Value));
+	}
+	
+	/* Helpers. */
+	
+	private Vector2 ConvertInputToWorldSpace(Vector2 input) {
+		return Camera.main.ScreenToWorldPoint(input);
 	}
 	
 	/* Getting configuration values. */

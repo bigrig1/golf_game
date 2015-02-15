@@ -63,11 +63,12 @@ public class GGArrowComponent: MonoBehaviour {
 	public void SetPosition(Vector2 origin, Vector2 tip) {
 		var angle                            = Mathf.Atan2(tip.y - origin.y, tip.x - origin.x) * Mathf.Rad2Deg - 90.0f;
 		var vector                           = tip - origin;
+		var bodyLength                       = Mathf.Max(0.0f, (tip - origin).magnitude - GGArrowComponent.headHeight);
 		this.head.transform.localPosition    = tip;
 		this.body.transform.localPosition    = origin;
 		this.head.transform.localEulerAngles = new Vector3(0.0f, 0.0f, angle);
 		this.body.transform.localEulerAngles = new Vector3(0.0f, 0.0f, angle);
-		this.body.transform.localScale       = new Vector3(1.0f, vector.magnitude, 1.0f);
+		this.body.transform.localScale       = new Vector3(1.0f, bodyLength, 1.0f);
 	}
 	
 	/* Accessing objects and components. */
@@ -78,7 +79,7 @@ public class GGArrowComponent: MonoBehaviour {
 	
 	/* Getting configuration values. */
 	
-	public const float headWidth     = 0.125f;
-	public const float headHeight    = 0.11f;
-	public const float bodyThickness = 0.025f;
+	public const float headWidth     = 0.6f;
+	public const float headHeight    = 0.475f;
+	public const float bodyThickness = 0.115f;
 }
