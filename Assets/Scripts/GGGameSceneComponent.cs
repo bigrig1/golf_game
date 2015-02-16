@@ -27,8 +27,8 @@ public class GGGameSceneComponent: MonoBehaviour {
 			}
 		}
 		
-		this.ballRigidbody  = this.ball.rigidbody;
-		this.arrowComponent = this.arrow.GetComponent<GGArrowComponent>();
+		this.ballRigidbody2D = this.ball.rigidbody2D;
+		this.arrowComponent  = this.arrow.GetComponent<GGArrowComponent>();
 	}
 	
 	/* Accessing the component. */
@@ -46,7 +46,7 @@ public class GGGameSceneComponent: MonoBehaviour {
 	/* Shooting the ball. */
 	
 	public void ShootBall(Vector2 inputVector) {
-		this.ballRigidbody.AddForce(inputVector * GGGameSceneComponent.inputForce, ForceMode.Impulse);
+		this.ballRigidbody2D.AddForce(inputVector * GGGameSceneComponent.inputForce, ForceMode2D.Impulse);
 	}
 	
 	/* Accessing game objects and components. */
@@ -60,7 +60,7 @@ public class GGGameSceneComponent: MonoBehaviour {
 	public GameObject arrow;
 	
 	// The ball's rigidbody component.
-	public Rigidbody ballRigidbody { get; private set; }
+	public Rigidbody2D ballRigidbody2D { get; private set; }
 	
 	// The arrow object's arrow component.
 	public GGArrowComponent arrowComponent { get; private set; }
