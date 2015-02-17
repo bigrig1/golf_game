@@ -87,6 +87,8 @@ public class GGGameSceneComponent: MonoBehaviour {
 	// physics behavior that we want.
 	public PhysicsMaterial2D ballMaterial;
 	public PhysicsMaterial2D grassMaterial;
+	public PhysicsMaterial2D dirtMaterial;
+	public PhysicsMaterial2D sandMaterial;
 	public PhysicsMaterial2D rockMaterial;
 	
 	/* Shooting the ball. */
@@ -103,6 +105,10 @@ public class GGGameSceneComponent: MonoBehaviour {
 		this.ballMaterial.bounciness  = GGGameSceneComponent.ballBounciness;
 		this.grassMaterial.friction   = GGGameSceneComponent.grassFriction * frictionMultiplier;
 		this.grassMaterial.bounciness = GGGameSceneComponent.grassBounciness;
+		this.dirtMaterial.friction    = GGGameSceneComponent.dirtFriction * frictionMultiplier;
+		this.dirtMaterial.bounciness  = GGGameSceneComponent.dirtBounciness;
+		this.sandMaterial.friction    = GGGameSceneComponent.sandFriction * frictionMultiplier;
+		this.sandMaterial.bounciness  = GGGameSceneComponent.sandBounciness;
 		this.rockMaterial.friction    = GGGameSceneComponent.rockFriction * frictionMultiplier;
 		this.rockMaterial.bounciness  = GGGameSceneComponent.rockBounciness;
 		
@@ -110,7 +116,9 @@ public class GGGameSceneComponent: MonoBehaviour {
 		this.UpdateCollider(this.ground.collider2D);
 		
 		foreach (var platformComponent in this.platformComponents) {
-			this.UpdateCollider(platformComponent.collider2D);
+			foreach (var collider in platformComponent.colliders) {
+				this.UpdateCollider(collider);
+			}
 		}
 		
 		foreach (var wallComponent in this.wallComponents) {
@@ -127,13 +135,17 @@ public class GGGameSceneComponent: MonoBehaviour {
 	
 	// A multiplier that gets applied to the input vector to determine the amount of force to use
 	// when shooting the ball.
-	public const float inputForce = 2.25f;
+	public const float inputForce = 2.75f;
 	
 	// Physics material values.
 	public const float ballFriction    = 0.25f;
 	public const float ballBounciness  = 0.0f;
 	public const float grassFriction   = 0.4f;
 	public const float grassBounciness = 0.275f;
+	public const float dirtFriction    = 0.5f;
+	public const float dirtBounciness  = 0.2f;
+	public const float sandFriction    = 0.85f;
+	public const float sandBounciness  = 0.1f;
 	public const float rockFriction    = 0.1f;
 	public const float rockBounciness  = 0.6f;
 }

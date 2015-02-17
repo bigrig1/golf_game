@@ -3,16 +3,24 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GGPlatformComponent: MonoBehaviour {
 	/* Initializing. */
 	
 	public void Start() {
-		this.renderer.material.color = GGPlatformComponent.color;
+		var transform  = this.transform;
+		var childCount = transform.childCount;
+		
+		for (var i = 0; i < childCount; i += 1) {
+			this.colliders.Add(transform.GetChild(i).collider2D);
+		}
 	}
 	
-	/* Getting configuration values. */
+	/* Getting child objects and components. */
 	
-	public static Color color = new Color(0.06f, 0.69f, 0.42f);
+	// The colliders of each portion of the platform.
+	[HideInInspector]
+	public List<Collider2D> colliders = new List<Collider2D>();
 }
