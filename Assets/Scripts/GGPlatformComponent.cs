@@ -10,11 +10,23 @@ public class GGPlatformComponent: MonoBehaviour {
 	/* Initializing. */
 	
 	public void Start() {
-		var transform  = this.transform;
-		var childCount = transform.childCount;
+		var physicsComponent = GGGameSceneComponent.instance.physicsComponent;
+		var transform        = this.transform;
+		var childCount       = transform.childCount;
 		
 		for (var i = 0; i < childCount; i += 1) {
-			this.colliders.Add(transform.GetChild(i).collider2D);
+			var child      = transform.GetChild(i);
+			var collider2D = child.collider2D;
+			
+			switch (child.name) {
+				case "Grass": collider2D.sharedMaterial = physicsComponent.grassMaterial;     break;
+				case "Dirt":  collider2D.sharedMaterial = physicsComponent.dirtMaterial;      break;
+				case "Sand":  collider2D.sharedMaterial = physicsComponent.sandMaterial;      break;
+				case "Rock":  collider2D.sharedMaterial = physicsComponent.rockMaterial;      break;
+				default:      Debug.LogError("Unhandled platform child name: " + child.name); break;
+			}
+			
+			this.colliders.Add(collider2D);
 		}
 	}
 	

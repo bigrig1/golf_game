@@ -16,7 +16,9 @@ public class GGInputComponent: MonoBehaviour {
 	/* Updating. */
 	
 	public void Update() {
-		if (Input.touchSupported) {
+		// TEMP: Unity complains about this API missing now...
+		// if (Input.touchSupported) {
+		if (false) {
 			this.UpdateTouchInput();
 		}
 		else {
