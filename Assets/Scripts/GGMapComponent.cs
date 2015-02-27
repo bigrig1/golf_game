@@ -10,7 +10,7 @@ public class GGMapComponent: MonoBehaviour {
 	/* Initializing. */
 	
 	public void Awake() {
-		
+		// Nothing yet.
 	}
 	
 	/* Accessing game objects and components. */
@@ -43,28 +43,55 @@ public class GGMapComponent: MonoBehaviour {
 	
 	// The platform components for the platform prototypes.
 	[HideInInspector]
-	public List<GGPlatformComponent> platformComponentPrototypes = new List<GGPlatformComponent>();
+	public List<GameObject> platformPrototypes = new List<GameObject>();
 	
 	// The wall components for the wall prototypes.
 	[HideInInspector]
-	public List<GGWallComponent> wallComponentPrototypes = new List<GGWallComponent>();
+	public List<GameObject> wallPrototypes = new List<GameObject>();
 	
 	/* Building maps. */
 	
 	// Procedurally generates a map by creating all the platforms and walls for it with the given Y
 	// offset. You'll always get the same map for a given map index.
 	public void BuildMap(int mapIndex, float yOffset) {
+		var mapWidth   = GGMapComponent.mapWidth;
+		var leftWallX  = -mapWidth / 2.0f;
+		// var rightWallX =  mapWidth / 2.0f;
+		
+		// TEMP: Need to figure out how to grab wall pieces.
+		// while (this.leftWallY < maxY) {
+		// 	this.leftWallY += this.AddWall(this.leftWallY, true);
+		// }
+		
+		var wallY               = yOffset;
+		var wall                = GameObject.Instantiate(this.wallPrototypes[0]) as GameObject;
+		var wallComponent       = wall.GetComponent<GGWallComponent>();
+		var wallHeight          = wallComponent.height;
+		wall.name               = "Wall";
+		wall.transform.position = new Vector3(leftWallX, wallY + wallHeight / 2.0f, 0.0f);
+		wall.SetActive(true);
+		this.wallComponents.Add(wallComponent);
+		
+		// The ground should only be active on the very first level. If we're generating any level
+		// other than the first one, then we've made it past the first level.
+		this.groundComponent.gameObject.SetActive(mapIndex == 0);
+	}
+	
+	private float AddWall(float y, bool isOnLeftSide) {
 		// TODO
+		return 0.0f;
 	}
 	
 	/* Loading game objects. */
 	
 	public void LoadPlatformPrototype(GameObject platform) {
-		this.platformComponentPrototypes.Add(platform.GetComponent<GGPlatformComponent>());
+		this.platformPrototypes.Add(platform);
+		platform.SetActive(false);
 	}
 	
 	public void LoadWallPrototype(GameObject wall) {
-		this.wallComponentPrototypes.Add(wall.GetComponent<GGWallComponent>());
+		this.wallPrototypes.Add(wall);
+		wall.SetActive(false);
 	}
 	
 	public void LoadGround(GameObject ground) {
@@ -74,5 +101,7 @@ public class GGMapComponent: MonoBehaviour {
 	
 	/* Getting configuration values. */
 	
-	// TODO
+	public const float mapWidth     = 28.0f;
+	public const float mapHeight    = 60.0f;
+	public const float groundHeight = 3.0f;
 }
