@@ -54,32 +54,47 @@ public class GGMapComponent: MonoBehaviour {
 	// Procedurally generates a map by creating all the platforms and walls for it with the given Y
 	// offset. You'll always get the same map for a given map index.
 	public void BuildMap(int mapIndex, float yOffset) {
-		var mapWidth   = GGMapComponent.mapWidth;
-		var leftWallX  = -mapWidth / 2.0f;
-		// var rightWallX =  mapWidth / 2.0f;
+		var mapHeight = GGMapComponent.mapHeight;
+		var wallY     = 0.0f;
 		
-		// TEMP: Need to figure out how to grab wall pieces.
-		// while (this.leftWallY < maxY) {
-		// 	this.leftWallY += this.AddWall(this.leftWallY, true);
-		// }
+		while (wallY < mapHeight) {
+			wallY += this.AddWall(wallY + yOffset, true);
+		}
 		
-		var wallY               = yOffset;
-		var wall                = GameObject.Instantiate(this.wallPrototypes[0]) as GameObject;
-		var wallComponent       = wall.GetComponent<GGWallComponent>();
-		var wallHeight          = wallComponent.height;
-		wall.name               = "Wall";
-		wall.transform.position = new Vector3(leftWallX, wallY + wallHeight / 2.0f, 0.0f);
-		wall.SetActive(true);
-		this.wallComponents.Add(wallComponent);
+		wallY = 0.0f;
+		
+		while (wallY < mapHeight) {
+			wallY += this.AddWall(wallY + yOffset, false);
+		}
 		
 		// The ground should only be active on the very first level. If we're generating any level
 		// other than the first one, then we've made it past the first level.
 		this.groundComponent.gameObject.SetActive(mapIndex == 0);
 	}
 	
+	// Adds a wall segment at the given Y position and returns the height of the segment that was
+	// added.
 	private float AddWall(float y, bool isOnLeftSide) {
-		// TODO
-		return 0.0f;
+		// TEMP: Need to figure out how to grab wall pieces.
+		var x = GGMapComponent.mapWidth / 2.0f;
+		
+		if (isOnLeftSide) {
+			x = -x;
+		}
+		
+		var wall                     = GameObject.Instantiate(this.wallPrototypes[0]) as GameObject;
+		var wallComponent            = wall.GetComponent<GGWallComponent>();
+		var wallHeight               = wallComponent.height;
+		wall.name                    = "Wall";
+		wall.transform.localPosition = new Vector3(x, y + wallHeight / 2.0f, 0.0f);
+		
+		if (!isOnLeftSide) {
+			wall.transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
+		}
+		
+		wall.SetActive(true);
+		this.wallComponents.Add(wallComponent);
+		return wallHeight;
 	}
 	
 	/* Loading game objects. */

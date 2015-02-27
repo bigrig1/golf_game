@@ -9,7 +9,8 @@ public class GGGroundComponent: MonoBehaviour {
 	/* Initializing. */
 	
 	public void Start() {
-		this.renderer.material.color = GGGroundComponent.color;
+		this.collider2D.sharedMaterial = GGGameSceneComponent.instance.physicsComponent.grassMaterial;
+		this.renderer.material.color   = GGGroundComponent.color;
 	}
 	
 	/* Getting configuration values. */

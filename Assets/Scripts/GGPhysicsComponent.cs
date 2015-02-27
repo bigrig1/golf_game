@@ -35,7 +35,7 @@ public class GGPhysicsComponent: MonoBehaviour {
 	public void FixedUpdate() {
 		var gameSceneComponent        = GGGameSceneComponent.instance;
 		var mapComponent              = gameSceneComponent.mapComponent;
-		var frictionMultiplier        = (Mathf.Abs(Vector2.Dot(Vector2.right, gameSceneComponent.ballRigidbody2D.velocity.normalized)) + 0.01f) * 2.0f;
+		var frictionMultiplier        = (Mathf.Abs(Vector2.Dot(Vector2.right, gameSceneComponent.ballRigidbody2D.velocity.normalized)) + 0.01f) * 3.0f;
 		this.grassMaterial.friction   = GGPhysicsComponent.grassFriction * frictionMultiplier;
 		this.grassMaterial.bounciness = GGPhysicsComponent.grassBounciness;
 		this.dirtMaterial.friction    = GGPhysicsComponent.dirtFriction * frictionMultiplier;
@@ -55,6 +55,8 @@ public class GGPhysicsComponent: MonoBehaviour {
 		foreach (var wallComponent in mapComponent.wallComponents) {
 			this.UpdateCollider(wallComponent.collider2D);
 		}
+		
+		this.UpdateCollider(mapComponent.groundCollider);
 	}
 	
 	private void UpdateCollider(Collider2D collider) {
