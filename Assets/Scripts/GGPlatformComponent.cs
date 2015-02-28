@@ -70,4 +70,19 @@ public class GGPlatformComponent: MonoBehaviour {
 	} }
 	
 	private Vector2 _size;
+	
+	// The platform's size class, which is based on its width.
+	public GGPlatformSizeClass sizeClass { get {
+		var width = this.size.x;
+		
+		if (width < 4.75f) {
+			return GGPlatformSizeClass.Small;
+		}
+		else if (width < 9.0f) {
+			return GGPlatformSizeClass.Medium;
+		}
+		else {
+			return GGPlatformSizeClass.Large;
+		}
+	} }
 }
