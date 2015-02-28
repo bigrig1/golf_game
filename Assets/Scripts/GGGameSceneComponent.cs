@@ -15,7 +15,7 @@ public class GGGameSceneComponent: MonoBehaviour {
 		this.LoadGameObjects();
 		
 		// TEMP
-		this.mapComponent.BuildMap(0, 0.0f);
+		this.mapComponent.BuildMap(0, 0.0f, false);
 	}
 	
 	private void LoadGameObjects() {

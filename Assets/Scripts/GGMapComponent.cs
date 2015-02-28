@@ -56,10 +56,10 @@ public class GGMapComponent: MonoBehaviour {
 	
 	// Procedurally generates a map by creating all the platforms and walls for it with the given Y
 	// offset. You'll always get the same map for a given map index.
-	public void BuildMap(int mapIndex, float yOffset) {
+	public void BuildMap(int mapIndex, float yOffset, bool shouldCreateDebugObjects) {
 		var random = new System.Random(168403912 + mapIndex);
 		this.AddWalls(random, yOffset);
-		this.AddPlatforms(mapIndex, random, yOffset);
+		this.AddPlatforms(mapIndex, random, yOffset, shouldCreateDebugObjects);
 		
 		// The ground should only be active on the very first map. If we're generating any map other
 		// than the first one, then we've made it past the first map.
@@ -108,7 +108,7 @@ public class GGMapComponent: MonoBehaviour {
 	}
 	
 	// Adds all of the platforms for the map.
-	private void AddPlatforms(int mapIndex, System.Random random, float yOffset) {
+	private void AddPlatforms(int mapIndex, System.Random random, float yOffset, bool shouldCreateDebugObjects) {
 		var usableMapHeight             = GGMapComponent.mapHeight - GGMapComponent.topMapPadding;
 		var platformArrangements        = this.PlatformArrangementsForMapIndex(mapIndex);
 		var sectionCount                = random.Next(GGMapComponent.minSectionCount, GGMapComponent.maxSectionCount + 1);
@@ -134,12 +134,12 @@ public class GGMapComponent: MonoBehaviour {
 		sectionMaxYs[sectionCount - 1] = usableMapHeight;
 		
 		for (var i = 0; i < sectionCount; i += 1) {
-			this.AddPlatformSection(i, yOffset, sectionMaxYs, sectionCount, platformArrangements, totalPlatformFrequency, random);
+			this.AddPlatformSection(i, yOffset, sectionMaxYs, sectionCount, platformArrangements, totalPlatformFrequency, random, shouldCreateDebugObjects);
 		}
 	}
 	
 	// Adds all the platforms for the given section.
-	private void AddPlatformSection(int index, float yOffset, float[] maxYs, int sectionCount, GGPlatformArrangement[] arrangements, float totalFrequency, System.Random random) {
+	private void AddPlatformSection(int index, float yOffset, float[] maxYs, int sectionCount, GGPlatformArrangement[] arrangements, float totalFrequency, System.Random random, bool shouldCreateDebugObjects) {
 		var usableMapWidth                        = GGMapComponent.mapWidth - GGMapComponent.horizontalMapPadding * 2.0f;
 		var y                                     = index == 0 ? yOffset : maxYs[index - 1] + yOffset;
 		var sectionHeight                         = maxYs[index] - y;
@@ -169,7 +169,10 @@ public class GGMapComponent: MonoBehaviour {
 			var newIndex                  = random.Next(i, selectedSizeClasses.Length);
 			selectedSizeClasses[i]        = selectedSizeClasses[newIndex];
 			selectedSizeClasses[newIndex] = sizeClass;
-			totalSizeClassWeight         += sizeClass.GetWeight();
+		}
+		
+		foreach (var sizeClass in selectedSizeClasses) {
+			totalSizeClassWeight += sizeClass.GetWeight();
 		}
 		
 		var minHorizontalSpacing = GGMapComponent.minHorizontalPlatformSpacing;
@@ -221,6 +224,13 @@ public class GGMapComponent: MonoBehaviour {
 			
 			platform.SetActive(true);
 			this.platformComponents.Add(platformComponent);
+			
+			if (shouldCreateDebugObjects) {
+				var debugObject                     = GameObject.Instantiate(Resources.Load("Prefabs/Debug Bounds")) as GameObject;
+				debugObject.transform.localPosition = new Vector3(platformsBounds[i].center.x, platformsBounds[i].center.y, 0.5f);
+				debugObject.transform.localScale    = new Vector3(platformsBounds[i].width, platformsBounds[i].height, 1.0f);
+				debugObject.renderer.material.color = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
+			}
 		}
 	}
 	
@@ -286,7 +296,7 @@ public class GGMapComponent: MonoBehaviour {
 	
 	// The amount of padding at the top of the map, which prevents platforms from being placed too
 	// close to the top of the screen.
-	public const float topMapPadding = 4.0f;
+	public const float topMapPadding = 4.5f;
 	
 	// The ratio of the height of the inner bounds of a platform section to the full height of the
 	// section. If this value is 1.0, the inner section will be just as tall as the outer section,
