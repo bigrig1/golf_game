@@ -120,7 +120,7 @@ public class GGMapComponent: MonoBehaviour {
 		
 		var sectionMaxYs            = new float[sectionCount];
 		var baseSectionHeight       = usableMapHeight / (float)sectionCount;
-		var divisionAdjustmentRange = baseSectionHeight / 5.0f;
+		var divisionAdjustmentRange = baseSectionHeight / 6.0f;
 		var totalPlatformFrequency  = 0.0f;
 		
 		foreach (var platformArrangement in platformArrangements) {
@@ -202,7 +202,14 @@ public class GGMapComponent: MonoBehaviour {
 			}
 			
 			// TODO: We need to make sure not to use the same arrangement twice in a row. Would also
-			// be good to prevent usage of the same platforms within the same map.
+			// be good to prevent usage of the same platforms within the same map. Actually, even
+			// better I think would be to not allow the same number of platforms in a section twice
+			// in a row. That should go a long way to help prevent unbeatable maps, since that
+			// should cause them to be kind of staggered between rows. Might run into issues in
+			// later arrangement sets though, where it falls into an obvious pattern of 1 platform -
+			// 2 platforms since it'll be very rare to have 3 platforms. Maybe we'll just bias
+			// towards a different platform count between adjacent sections rather than strictly
+			// enforcing it.
 			
 			var platformIndex                = random.Next(0, platformPrototypes.Count);
 			var platform                     = GameObject.Instantiate(platformPrototypes[platformIndex]) as GameObject;
