@@ -211,6 +211,12 @@ public class GGMapComponent: MonoBehaviour {
 			// towards a different platform count between adjacent sections rather than strictly
 			// enforcing it.
 			
+			// TEMP: Right now we don't have any large pieces, so we run into trouble when we look
+			// for a large piece. This won't be a problem once we have some large pieces, though.
+			if (platformPrototypes.Count == 0) {
+				continue;
+			}
+			
 			var platformIndex                = random.Next(0, platformPrototypes.Count);
 			var platform                     = GameObject.Instantiate(platformPrototypes[platformIndex]) as GameObject;
 			var platformComponent            = platform.GetComponent<GGPlatformComponent>();
@@ -292,7 +298,7 @@ public class GGMapComponent: MonoBehaviour {
 	/* Getting configuration values. */
 	
 	// The width of each map. This defines where walls and platforms are placed.
-	public const float mapWidth = 28.0f;
+	public const float mapWidth = 26.0f;
 	
 	// The full height of each map, from the bottom of the screen to the top.
 	public const float mapHeight = 48.0f;
