@@ -13,12 +13,14 @@ public class GGInputComponent: MonoBehaviour {
 	private Vector2? inputOrigin;
 	private Vector2? currentInput;
 	
+	// Whether or not the ball has been recently hit. This will be set to true when the player hits
+	// the ball and back to false once it comes to a rest.
+	private bool ballHasBeenHit = false;
+	
 	/* Updating. */
 	
 	public void Update() {
-		// TEMP: Unity complains about this API missing now...
-		// if (Input.touchSupported) {
-		if (false) {
+		if (Input.touchSupported) {
 			this.UpdateTouchInput();
 		}
 		else {
@@ -28,6 +30,11 @@ public class GGInputComponent: MonoBehaviour {
 	
 	public void FixedUpdate() {
 		this.UpdateArrow();
+		
+		if (this.ballHasBeenHit && GGGameSceneComponent.instance.ballRigidbody2D.IsSleeping()) {
+			Debug.Log("DONE");
+			this.ballHasBeenHit = false;
+		}
 	}
 	
 	private void UpdateTouchInput() {
@@ -99,7 +106,7 @@ public class GGInputComponent: MonoBehaviour {
 	private void UpdateArrow() {
 		var arrow = GGGameSceneComponent.instance.arrow;
 		
-		if (this.inputOrigin.HasValue && this.currentInput.HasValue) {
+		if (!this.ballHasBeenHit && this.inputOrigin.HasValue && this.currentInput.HasValue) {
 			var inputOrigin    = this.inputOrigin.Value;
 			var currentInput   = this.currentInput.Value;
 			var inputMagnitude = currentInput - inputOrigin;
@@ -115,7 +122,10 @@ public class GGInputComponent: MonoBehaviour {
 	/* Shooting. */
 	
 	private void Shoot() {
-		GGGameSceneComponent.instance.ShootBall(this.inputOrigin.Value - this.currentInput.Value);
+		if (!this.ballHasBeenHit) {
+			this.ballHasBeenHit = true;
+			GGGameSceneComponent.instance.ShootBall(this.inputOrigin.Value - this.currentInput.Value);
+		}
 	}
 	
 	/* Helpers. */

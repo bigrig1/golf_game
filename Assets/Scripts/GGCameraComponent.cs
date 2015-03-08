@@ -16,22 +16,8 @@ public class GGCameraComponent: MonoBehaviour {
 	
 	/* Updaing. */
 	
-	private bool poop = false;
-	private bool poop2 = false;
-	
 	public void Update() {
-		this.transform.Translate(new Vector3(0.0f, 1.75f * Time.deltaTime, 0.0f));
-		
-		if (!poop && this.transform.position.y >= 23.0f) {
-			poop = true;
-			Debug.Log("YA");
-			GGGameSceneComponent.instance.mapComponent.BuildNextMap();
-		}
-		else if (!poop2 && this.transform.position.y >= 28.0f) {
-			poop2 = true;
-			Debug.Log("YA 2");
-			GGGameSceneComponent.instance.mapComponent.BuildNextMap();
-		}
+		// this.transform.Translate(new Vector3(0.0f, 1.75f * Time.deltaTime, 0.0f));
 	}
 	
 	/* Getting configuration values. */
