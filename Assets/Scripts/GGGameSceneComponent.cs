@@ -13,9 +13,8 @@ public class GGGameSceneComponent: MonoBehaviour {
 		this.mapComponent     = this.GetComponent<GGMapComponent>();
 		this.physicsComponent = this.GetComponent<GGPhysicsComponent>();
 		this.LoadGameObjects();
-		
-		// TEMP
-		this.mapComponent.BuildMap(0, 0.0f, false);
+		// TODO: Load initial map index.
+		this.mapComponent.BuildFirstMap(0);
 	}
 	
 	private void LoadGameObjects() {

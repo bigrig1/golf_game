@@ -22,23 +22,29 @@ public class GGMapComponent: MonoBehaviour {
 	// The ground object's collider.
 	public Collider2D groundCollider { get; private set; }
 	
+	// The list of platform components that were being used in the previous map.
+	[HideInInspector]
+	public List<GGPlatformComponent> previousPlatformComponents = new List<GGPlatformComponent>();
+	
 	// The list of platform components that are currently being used in the map.
 	[HideInInspector]
 	public List<GGPlatformComponent> platformComponents = new List<GGPlatformComponent>();
 	
-	// The list of platform components that were used in the previous map. We need to keep them here
-	// during transitions, but they'll be destroyed immediately after the transition completes.
+	// The list of platform components that will be used for the next map.
 	[HideInInspector]
-	public List<GGPlatformComponent> oldPlatformComponents = new List<GGPlatformComponent>();
+	public List<GGPlatformComponent> nextPlatformComponents = new List<GGPlatformComponent>();
+	
+	// The list of wall components that were being used in the previous map.
+	[HideInInspector]
+	public List<GGWallComponent> previousWallComponents = new List<GGWallComponent>();
 	
 	// The list of wall components that are currently being used in the map.
 	[HideInInspector]
 	public List<GGWallComponent> wallComponents = new List<GGWallComponent>();
 	
-	// The list of wall components that were used in the previous map. We need to keep them here
-	// during transitions, but they'll be destroyed immediately after the transition completes.
+	// The list of wall components that will be used in the next map.
 	[HideInInspector]
-	public List<GGWallComponent> oldWallComponents = new List<GGWallComponent>();
+	public List<GGWallComponent> nextWallComponents = new List<GGWallComponent>();
 	
 	/* Managing map component prototypes. */
 	
@@ -60,20 +66,84 @@ public class GGMapComponent: MonoBehaviour {
 	
 	/* Building maps. */
 	
-	// Procedurally generates a map by creating all the platforms and walls for it with the given Y
-	// offset. You'll always get the same map for a given map index.
-	public void BuildMap(int mapIndex, float yOffset, bool shouldCreateDebugObjects) {
-		var random = new System.Random(168403912 + mapIndex);
-		this.AddWalls(random, yOffset);
-		this.AddPlatforms(mapIndex, random, yOffset, shouldCreateDebugObjects);
+	private float yOffset = 0.0f;
+	public int currentMapIndex { get; private set; }
+	private bool shouldCreateDebugObjects = false;
+	
+	// Builds the first map of the game. An initial map index can be passed in to start at an
+	// arbitrary map.
+	public void BuildFirstMap(int initialMapIndex) {
+		this.currentMapIndex = initialMapIndex;
+		this.BuildMap(this.currentMapIndex, false);
+		this.yOffset += GGMapComponent.mapHeight;
+		this.BuildMap(this.currentMapIndex + 1, true);
+	}
+	
+	// Builds the next map.
+	public void BuildNextMap() {
+		this.DestroyPreviousMap();
 		
-		// The ground should only be active on the very first map. If we're generating any map other
-		// than the first one, then we've made it past the first map.
-		this.groundComponent.gameObject.SetActive(mapIndex == 0);
+		foreach (var wallComponent in this.wallComponents) {
+			this.previousWallComponents.Add(wallComponent);
+		}
+		
+		foreach (var platformComponent in this.platformComponents) {
+			this.previousPlatformComponents.Add(platformComponent);
+		}
+		
+		this.wallComponents.Clear();
+		this.platformComponents.Clear();
+		
+		foreach (var wallComponent in this.nextWallComponents) {
+			this.wallComponents.Add(wallComponent);
+		}
+		
+		foreach (var platformComponent in this.nextPlatformComponents) {
+			this.platformComponents.Add(platformComponent);
+			platformComponent.gameObject.SetActive(true);
+		}
+		
+		this.nextWallComponents.Clear();
+		this.nextPlatformComponents.Clear();
+		
+		this.currentMapIndex += 1;
+		this.yOffset         += GGMapComponent.mapHeight;
+		this.BuildMap(this.currentMapIndex + 1, true);
+	}
+	
+	// Destroys everything in the previous map. This should be called after the transition to the
+	// next map finishes to clean up unneeded objects.
+	public void DestroyPreviousMap() {
+		foreach (var wallComponent in this.previousWallComponents) {
+			GameObject.Destroy(wallComponent.gameObject);
+		}
+		
+		foreach (var platformComponent in this.previousPlatformComponents) {
+			GameObject.Destroy(platformComponent.gameObject);
+		}
+		
+		this.previousWallComponents.Clear();
+		this.previousPlatformComponents.Clear();
+	}
+	
+	// Procedurally generates a map by creating all the platforms and walls for it. You'll always
+	// get the same map for a given map index. If isNextMap is true, the walls and platforms will be
+	// added to the next
+	private void BuildMap(int mapIndex, bool isNextMap) {
+		var random = new System.Random(168403912 + mapIndex);
+		this.AddWalls(isNextMap, random);
+		this.AddPlatforms(mapIndex, isNextMap, random);
+		this.groundComponent.gameObject.SetActive(mapIndex <= 1);
+		
+		if (isNextMap) {
+			foreach (var platformComponent in this.nextPlatformComponents) {
+				platformComponent.gameObject.SetActive(false);
+			}
+		}
 	}
 	
 	// Adds all of the walls for the map.
-	private void AddWalls(System.Random random, float yOffset) {
+	private void AddWalls(bool isNextMap, System.Random random) {
 		var wallArrangements = GGMapComponent.wallArrangements;
 		var leftArrangement  = wallArrangements[random.Next(wallArrangements.Length)];
 		var rightArrangement = wallArrangements[random.Next(wallArrangements.Length)];
@@ -94,19 +164,19 @@ public class GGMapComponent: MonoBehaviour {
 		}
 		
 		foreach (var sizeClass in leftArrangement) {
-			wallY += this.AddWall(wallY + yOffset, sizeClass, true, random);
+			wallY += this.AddWall(wallY + this.yOffset, sizeClass, true, isNextMap, random);
 		}
 		
 		wallY = 0.0f;
 		
 		foreach (var sizeClass in rightArrangement) {
-			wallY += this.AddWall(wallY + yOffset, sizeClass, false, random);
+			wallY += this.AddWall(wallY + this.yOffset, sizeClass, false, isNextMap, random);
 		}
 	}
 	
 	// Adds a wall segment at the given Y position and returns the height of the segment that was
 	// added.
-	private float AddWall(float y, GGWallSizeClass sizeClass, bool isOnLeftSide, System.Random random) {
+	private float AddWall(float y, GGWallSizeClass sizeClass, bool isOnLeftSide, bool isNextMap, System.Random random) {
 		var x = GGMapComponent.mapWidth / 2.0f;
 		
 		if (isOnLeftSide) {
@@ -134,12 +204,19 @@ public class GGMapComponent: MonoBehaviour {
 		}
 		
 		wall.SetActive(true);
-		this.wallComponents.Add(wallComponent);
+		
+		if (isNextMap) {
+			this.nextWallComponents.Add(wallComponent);
+		}
+		else {
+			this.wallComponents.Add(wallComponent);
+		}
+		
 		return wallHeight;
 	}
 	
 	// Adds all of the platforms for the map.
-	private void AddPlatforms(int mapIndex, System.Random random, float yOffset, bool shouldCreateDebugObjects) {
+	private void AddPlatforms(int mapIndex, bool isNextMap, System.Random random) {
 		var usableMapHeight             = GGMapComponent.mapHeight - GGMapComponent.topMapPadding;
 		var platformArrangements        = this.PlatformArrangementsForMapIndex(mapIndex);
 		var sectionCount                = random.Next(GGMapComponent.minSectionCount, GGMapComponent.maxSectionCount + 1);
@@ -165,15 +242,16 @@ public class GGMapComponent: MonoBehaviour {
 		sectionMaxYs[sectionCount - 1] = usableMapHeight;
 		
 		for (var i = 0; i < sectionCount; i += 1) {
-			this.AddPlatformSection(i, yOffset, sectionMaxYs, sectionCount, platformArrangements, totalPlatformFrequency, random, shouldCreateDebugObjects);
+			this.AddPlatformSection(i, sectionMaxYs, sectionCount, platformArrangements, totalPlatformFrequency, isNextMap, random);
 		}
 	}
 	
 	// Adds all the platforms for the given section.
-	private void AddPlatformSection(int index, float yOffset, float[] maxYs, int sectionCount, GGPlatformArrangement[] arrangements, float totalFrequency, System.Random random, bool shouldCreateDebugObjects) {
+	private void AddPlatformSection(int index, float[] localMaxYs, int sectionCount, GGPlatformArrangement[] arrangements, float totalFrequency, bool isNextMap, System.Random random) {
 		var usableMapWidth                        = GGMapComponent.mapWidth - GGMapComponent.horizontalMapPadding * 2.0f;
-		var y                                     = index == 0 ? yOffset : maxYs[index - 1] + yOffset;
-		var sectionHeight                         = maxYs[index] - y;
+		var localY                                = index == 0 ? 0.0f : localMaxYs[index - 1];
+		var y                                     = localY + this.yOffset;
+		var sectionHeight                         = localMaxYs[index] - localY;
 		var innerSectionHeight                    = sectionHeight * GGMapComponent.innerSectionHeightRatio;
 		var innerYOffset                          = (sectionHeight - innerSectionHeight) / 2.0f;
 		var innerBounds                           = new Rect(-usableMapWidth / 2.0f, y + innerYOffset, usableMapWidth, innerSectionHeight);
@@ -267,9 +345,15 @@ public class GGMapComponent: MonoBehaviour {
 			}
 			
 			platform.SetActive(true);
-			this.platformComponents.Add(platformComponent);
 			
-			if (shouldCreateDebugObjects) {
+			if (isNextMap) {
+				this.nextPlatformComponents.Add(platformComponent);
+			}
+			else {
+				this.platformComponents.Add(platformComponent);
+			}
+			
+			if (this.shouldCreateDebugObjects) {
 				var debugObject                     = GameObject.Instantiate(Resources.Load("Prefabs/Debug Bounds")) as GameObject;
 				debugObject.transform.localPosition = new Vector3(platformsBounds[i].center.x, platformsBounds[i].center.y, 0.5f);
 				debugObject.transform.localScale    = new Vector3(platformsBounds[i].width, platformsBounds[i].height, 1.0f);
@@ -340,11 +424,11 @@ public class GGMapComponent: MonoBehaviour {
 	public const float mapWidth = 19.0f;
 	
 	// The full height of each map, from the bottom of the screen to the top.
-	public const float mapHeight = 40.0f;
+	public const float mapHeight = 36.0f;
 	
 	// The amount of padding on the sides of the map, which is used for positioning platforms so
 	// that they don't overlap the walls.
-	public const float horizontalMapPadding = 3.5f;
+	public const float horizontalMapPadding = 2.5f;
 	
 	// The amount of padding at the top of the map, which prevents platforms from being placed too
 	// close to the top of the screen.
