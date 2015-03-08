@@ -24,4 +24,23 @@ public class GGWallComponent: MonoBehaviour {
 	} }
 	
 	private float _height;
+	
+	// The wall's size class, which is based on its height.
+	public GGWallSizeClass sizeClass { get {
+		var height = Mathf.Round(this.height);
+		
+		if (height == GGWallSizeClass.Small.GetHeight()) {
+			return GGWallSizeClass.Small;
+		}
+		else if (height == GGWallSizeClass.Medium.GetHeight()) {
+			return GGWallSizeClass.Medium;
+		}
+		else if (height == GGWallSizeClass.Large.GetHeight()) {
+			return GGWallSizeClass.Large;
+		}
+		
+		Debug.LogError("Tried to get size class of a wall whose height did not correspond to any size class.");
+		
+		return GGWallSizeClass.Small;
+	} }
 }

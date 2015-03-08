@@ -45,12 +45,18 @@ public class GGMapComponent: MonoBehaviour {
 	// The platform components for the platform prototypes, grouped by size class.
 	[HideInInspector]
 	public List<GameObject> smallPlatformPrototypes  = new List<GameObject>();
+	[HideInInspector]
 	public List<GameObject> mediumPlatformPrototypes = new List<GameObject>();
+	[HideInInspector]
 	public List<GameObject> largePlatformPrototypes  = new List<GameObject>();
 	
-	// The wall components for the wall prototypes.
+	// The wall components for the wall prototypes, grouped by size class.
 	[HideInInspector]
-	public List<GameObject> wallPrototypes = new List<GameObject>();
+	public List<GameObject> smallWallPrototypes  = new List<GameObject>();
+	[HideInInspector]
+	public List<GameObject> mediumWallPrototypes = new List<GameObject>();
+	[HideInInspector]
+	public List<GameObject> largeWallPrototypes  = new List<GameObject>();
 	
 	/* Building maps. */
 	
@@ -68,31 +74,56 @@ public class GGMapComponent: MonoBehaviour {
 	
 	// Adds all of the walls for the map.
 	private void AddWalls(System.Random random, float yOffset) {
-		var mapHeight = GGMapComponent.mapHeight;
-		var wallY     = 0.0f;
+		var wallArrangements = GGMapComponent.wallArrangements;
+		var leftArrangement  = wallArrangements[random.Next(wallArrangements.Length)];
+		var rightArrangement = wallArrangements[random.Next(wallArrangements.Length)];
+		var wallY            = 0.0f;
 		
-		while (wallY < mapHeight) {
-			wallY += this.AddWall(wallY + yOffset, true, random);
+		for (var i = 0; i < leftArrangement.Length; i += 1) {
+			var sizeClass             = leftArrangement[i];
+			var newIndex              = random.Next(i, leftArrangement.Length);
+			leftArrangement[i]        = leftArrangement[newIndex];
+			leftArrangement[newIndex] = sizeClass;
+		}
+		
+		for (var i = 0; i < rightArrangement.Length; i += 1) {
+			var sizeClass              = rightArrangement[i];
+			var newIndex               = random.Next(i, rightArrangement.Length);
+			rightArrangement[i]        = rightArrangement[newIndex];
+			rightArrangement[newIndex] = sizeClass;
+		}
+		
+		foreach (var sizeClass in leftArrangement) {
+			wallY += this.AddWall(wallY + yOffset, sizeClass, true, random);
 		}
 		
 		wallY = 0.0f;
 		
-		while (wallY < mapHeight) {
-			wallY += this.AddWall(wallY + yOffset, false, random);
+		foreach (var sizeClass in rightArrangement) {
+			wallY += this.AddWall(wallY + yOffset, sizeClass, false, random);
 		}
 	}
 	
 	// Adds a wall segment at the given Y position and returns the height of the segment that was
 	// added.
-	private float AddWall(float y, bool isOnLeftSide, System.Random random) {
+	private float AddWall(float y, GGWallSizeClass sizeClass, bool isOnLeftSide, System.Random random) {
 		var x = GGMapComponent.mapWidth / 2.0f;
 		
 		if (isOnLeftSide) {
 			x = -x;
 		}
 		
-		var wallIndex                = random.Next(this.wallPrototypes.Count);
-		var wall                     = GameObject.Instantiate(this.wallPrototypes[wallIndex]) as GameObject;
+		List<GameObject> wallPrototypes = null;
+		
+		switch (sizeClass) {
+			case GGWallSizeClass.Small:  wallPrototypes = this.smallWallPrototypes;        break;
+			case GGWallSizeClass.Medium: wallPrototypes = this.mediumWallPrototypes;       break;
+			case GGWallSizeClass.Large:  wallPrototypes = this.largeWallPrototypes;        break;
+			default:                     Debug.LogError("Unhandled platform size class."); break;
+		}
+		
+		var wallIndex                = random.Next(wallPrototypes.Count);
+		var wall                     = GameObject.Instantiate(wallPrototypes[wallIndex]) as GameObject;
 		var wallComponent            = wall.GetComponent<GGWallComponent>();
 		var wallHeight               = wallComponent.height;
 		wall.name                    = "Wall";
@@ -286,7 +317,15 @@ public class GGMapComponent: MonoBehaviour {
 	}
 	
 	public void LoadWallPrototype(GameObject wall) {
-		this.wallPrototypes.Add(wall);
+		var wallComponent = wall.GetComponent<GGWallComponent>();
+		
+		switch (wallComponent.sizeClass) {
+			case GGWallSizeClass.Small:  this.smallWallPrototypes.Add(wall);           break;
+			case GGWallSizeClass.Medium: this.mediumWallPrototypes.Add(wall);          break;
+			case GGWallSizeClass.Large:  this.largeWallPrototypes.Add(wall);           break;
+			default:                     Debug.LogError("Unhandled wall size class."); break;
+		}
+		
 		wall.SetActive(false);
 	}
 	
@@ -323,7 +362,7 @@ public class GGMapComponent: MonoBehaviour {
 	
 	// The minimum and maximum number of platform sections that can be used for an individual map.
 	public const int minSectionCount = 3;
-	public const int maxSectionCount = 6;
+	public const int maxSectionCount = 5;
 	
 	// The arrangements of platform size classes that are allowed to be used in a single section
 	// starting at map 0.
@@ -440,16 +479,17 @@ public class GGMapComponent: MonoBehaviour {
 		new GGPlatformArrangement(0.5f,  GGPlatformSizeClass.Small, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small)
 	};
 	
-	public static GGPlatformSizeClass[][] standardSizeClassArrangements = new [] {
-		new [] { GGPlatformSizeClass.Large                             },
-		new [] { GGPlatformSizeClass.Large, GGPlatformSizeClass.Medium },
-		new [] { GGPlatformSizeClass.Large, GGPlatformSizeClass.Small  },
-		
-		new [] { GGPlatformSizeClass.Medium, GGPlatformSizeClass.Medium                           },
-		new [] { GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small                            },
-		new [] { GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small },
-		
-		new [] { GGPlatformSizeClass.Small, GGPlatformSizeClass.Small                            },
-		new [] { GGPlatformSizeClass.Small, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small }
+	// The possible arrangements of wall pieces based on their size class. The order gets shuffled
+	// when the map is generated, so there's no need to have multiple entries with the same
+	// combination of size classes.
+	public static GGWallSizeClass[][] wallArrangements = new [] {
+		new [] { GGWallSizeClass.Large, GGWallSizeClass.Large, GGWallSizeClass.Large },
+		new [] { GGWallSizeClass.Large, GGWallSizeClass.Large, GGWallSizeClass.Medium, GGWallSizeClass.Medium },
+		new [] { GGWallSizeClass.Large, GGWallSizeClass.Large, GGWallSizeClass.Medium, GGWallSizeClass.Small, GGWallSizeClass.Small },
+		new [] { GGWallSizeClass.Large, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium },
+		new [] { GGWallSizeClass.Large, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Small, GGWallSizeClass.Small },
+		new [] { GGWallSizeClass.Large, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Small, GGWallSizeClass.Small, GGWallSizeClass.Small, GGWallSizeClass.Small },
+		new [] { GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Small, GGWallSizeClass.Small, GGWallSizeClass.Small, GGWallSizeClass.Small },
+		new [] { GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Small, GGWallSizeClass.Small }
 	};
 }

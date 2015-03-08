@@ -75,10 +75,10 @@ public class GGPlatformComponent: MonoBehaviour {
 	public GGPlatformSizeClass sizeClass { get {
 		var width = this.size.x;
 		
-		if (width < 4.75f) {
+		if (width < 4.0f) {
 			return GGPlatformSizeClass.Small;
 		}
-		else if (width < 9.0f) {
+		else if (width < 7.0f) {
 			return GGPlatformSizeClass.Medium;
 		}
 		else {
