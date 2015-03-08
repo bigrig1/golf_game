@@ -76,16 +76,4 @@ public class GGGameSceneComponent: MonoBehaviour {
 	
 	// The physics component.
 	public GGPhysicsComponent physicsComponent { get; private set; }
-	
-	/* Shooting the ball. */
-	
-	public void ShootBall(Vector2 inputVector) {
-		this.ballRigidbody2D.AddForce(inputVector * GGGameSceneComponent.inputForce, ForceMode2D.Impulse);
-	}
-	
-	/* Getting configuration values. */
-	
-	// A multiplier that gets applied to the input vector to determine the amount of force to use
-	// when shooting the ball.
-	public const float inputForce = 2.75f;
 }

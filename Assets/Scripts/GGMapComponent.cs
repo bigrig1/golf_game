@@ -66,8 +66,8 @@ public class GGMapComponent: MonoBehaviour {
 	
 	/* Building maps. */
 	
-	private float yOffset = 0.0f;
 	public int currentMapIndex { get; private set; }
+	private float yOffset = 0.0f;
 	private bool shouldCreateDebugObjects = false;
 	
 	// Builds the first map of the game. An initial map index can be passed in to start at an
@@ -217,8 +217,9 @@ public class GGMapComponent: MonoBehaviour {
 	
 	// Adds all of the platforms for the map.
 	private void AddPlatforms(int mapIndex, bool isNextMap, System.Random random) {
-		var usableMapHeight             = GGMapComponent.mapHeight - GGMapComponent.topMapPadding;
 		var platformArrangements        = this.PlatformArrangementsForMapIndex(mapIndex);
+		var groundOffset                = mapIndex == 0 ? this.groundComponent.height + GGMapComponent.groundMargin : 0.0f;
+		var usableMapHeight             = GGMapComponent.mapHeight - GGMapComponent.topMapPadding - groundOffset;
 		var sectionCount                = random.Next(GGMapComponent.minSectionCount, GGMapComponent.maxSectionCount + 1);
 		var sectionCountReductionChance = (float)mapIndex / 500.0f;
 		
@@ -236,20 +237,20 @@ public class GGMapComponent: MonoBehaviour {
 		}
 		
 		for (var i = 0; i < sectionCount - 1; i += 1) {
-			sectionMaxYs[i] = (float)(i + 1) * baseSectionHeight + divisionAdjustmentRange + (float)(random.NextDouble() - 0.5);
+			sectionMaxYs[i] = groundOffset + (float)(i + 1) * baseSectionHeight + divisionAdjustmentRange + (float)(random.NextDouble() - 0.5);
 		}
 		
 		sectionMaxYs[sectionCount - 1] = usableMapHeight;
 		
 		for (var i = 0; i < sectionCount; i += 1) {
-			this.AddPlatformSection(i, sectionMaxYs, sectionCount, platformArrangements, totalPlatformFrequency, isNextMap, random);
+			this.AddPlatformSection(i, groundOffset, sectionMaxYs, sectionCount, platformArrangements, totalPlatformFrequency, isNextMap, random);
 		}
 	}
 	
 	// Adds all the platforms for the given section.
-	private void AddPlatformSection(int index, float[] localMaxYs, int sectionCount, GGPlatformArrangement[] arrangements, float totalFrequency, bool isNextMap, System.Random random) {
+	private void AddPlatformSection(int index, float groundOffset, float[] localMaxYs, int sectionCount, GGPlatformArrangement[] arrangements, float totalFrequency, bool isNextMap, System.Random random) {
 		var usableMapWidth                        = GGMapComponent.mapWidth - GGMapComponent.horizontalMapPadding * 2.0f;
-		var localY                                = index == 0 ? 0.0f : localMaxYs[index - 1];
+		var localY                                = groundOffset + (index == 0 ? 0.0f : localMaxYs[index - 1]);
 		var y                                     = localY + this.yOffset;
 		var sectionHeight                         = localMaxYs[index] - localY;
 		var innerSectionHeight                    = sectionHeight * GGMapComponent.innerSectionHeightRatio;
@@ -425,6 +426,9 @@ public class GGMapComponent: MonoBehaviour {
 	
 	// The full height of each map, from the bottom of the screen to the top.
 	public const float mapHeight = 36.0f;
+	
+	// How far from the ground platforms must be in the first map that has the ground.
+	public const float groundMargin = 2.0f;
 	
 	// The amount of padding on the sides of the map, which is used for positioning platforms so
 	// that they don't overlap the walls.

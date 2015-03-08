@@ -32,7 +32,6 @@ public class GGInputComponent: MonoBehaviour {
 		this.UpdateArrow();
 		
 		if (this.ballHasBeenHit && GGGameSceneComponent.instance.ballRigidbody2D.IsSleeping()) {
-			Debug.Log("DONE");
 			this.ballHasBeenHit = false;
 		}
 	}
@@ -106,13 +105,14 @@ public class GGInputComponent: MonoBehaviour {
 	private void UpdateArrow() {
 		var arrow = GGGameSceneComponent.instance.arrow;
 		
-		if (!this.ballHasBeenHit && this.inputOrigin.HasValue && this.currentInput.HasValue) {
-			var inputOrigin    = this.inputOrigin.Value;
-			var currentInput   = this.currentInput.Value;
-			var inputMagnitude = currentInput - inputOrigin;
-			var arrowComponent = GGGameSceneComponent.instance.arrowComponent;
-			arrow.SetActive(true);
+		if (this.inputOrigin.HasValue && this.currentInput.HasValue) {
+			var arrowComponent     = GGGameSceneComponent.instance.arrowComponent;
+			var inputOrigin        = this.inputOrigin.Value;
+			var currentInput       = this.currentInput.Value;
+			var inputMagnitude     = currentInput - inputOrigin;
+			arrowComponent.isFaded = this.ballHasBeenHit;
 			arrowComponent.SetPosition(inputOrigin, inputOrigin - inputMagnitude);
+			arrow.SetActive(true);
 		}
 		else {
 			arrow.SetActive(false);
@@ -123,8 +123,10 @@ public class GGInputComponent: MonoBehaviour {
 	
 	private void Shoot() {
 		if (!this.ballHasBeenHit) {
+			var ballRigidbody2D = GGGameSceneComponent.instance.ballRigidbody2D;
+			var inputVector     = this.inputOrigin.Value - this.currentInput.Value;
 			this.ballHasBeenHit = true;
-			GGGameSceneComponent.instance.ShootBall(this.inputOrigin.Value - this.currentInput.Value);
+			ballRigidbody2D.AddForce(inputVector * GGInputComponent.inputForce, ForceMode2D.Impulse);
 		}
 	}
 	
@@ -139,4 +141,8 @@ public class GGInputComponent: MonoBehaviour {
 	// The minimum and maximum magnitudes of the input vector in screen space (pixels).
 	public const float minInputThreshold = 0.5f;
 	public const float maxInputThreshold = 9.0f;
+	
+	// A multiplier that gets applied to the input vector to determine the amount of force to use
+	// when shooting the ball.
+	public const float inputForce = 2.5f;
 }

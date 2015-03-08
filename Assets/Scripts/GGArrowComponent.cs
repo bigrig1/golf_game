@@ -9,13 +9,25 @@ public class GGArrowComponent: MonoBehaviour {
 	/* Initializing. */
 	
 	public void Start() {
-		this.head                         = this.transform.Find("Head").gameObject;
-		this.body                         = this.transform.Find("Body").gameObject;
-		this.head.renderer.material.color = GGArrowComponent.color;
-		this.body.renderer.material.color = GGArrowComponent.color;
+		this.head    = this.transform.Find("Head").gameObject;
+		this.body    = this.transform.Find("Body").gameObject;
+		this.isFaded = false;
 		this.GenerateHeadMesh();
 		this.GenerateBodyMesh();
 	}
+	
+	/* Configuring the component. */
+	
+	public bool isFaded {
+		get { return _isFaded; }
+		set {
+			_isFaded                          = value;
+			this.head.renderer.material.color = _isFaded ? GGArrowComponent.fadedColor : GGArrowComponent.standardColor;
+			this.body.renderer.material.color = _isFaded ? GGArrowComponent.fadedColor : GGArrowComponent.standardColor;
+		}
+	}
+	
+	private bool _isFaded = false;
 	
 	/* Generating meshes. */
 	
@@ -80,7 +92,8 @@ public class GGArrowComponent: MonoBehaviour {
 	
 	/* Getting configuration values. */
 	
-	public static Color color         = new Color(0.29f, 0.53f, 0.92f);
+	public static Color standardColor = new Color(0.29f, 0.53f, 0.92f, 1.0f);
+	public static Color fadedColor    = new Color(0.51f, 0.75f, 0.92f, 1.0f);
 	public const  float headWidth     = 0.6f;
 	public const  float headHeight    = 0.475f;
 	public const  float bodyThickness = 0.115f;
