@@ -28,14 +28,14 @@ public class GGBallComponent: MonoBehaviour {
 	public float maxCollisionVolume      = 1.0f;
 	public float collisionPitchVariation = 0.2f;
 	
-	public AudioClip smallShotAudioClip;
-	public AudioClip mediumShotAudioClip;
-	public AudioClip bigShotAudioClip;
+	public AudioClip[] smallShotAudioClips;
+	public AudioClip[] mediumShotAudioClips;
+	public AudioClip[] bigShotAudioClips;
 	
-	public AudioClip grassAudioClip;
-	public AudioClip rockAudioClip;
-	public AudioClip dirtAudioClip;
-	public AudioClip sandAudioClip;
+	public AudioClip[] grassAudioClips;
+	public AudioClip[] rockAudioClips;
+	public AudioClip[] dirtAudioClips;
+	public AudioClip[] sandAudioClips;
 	
 	/* Accessing components. */
 	
@@ -52,13 +52,13 @@ public class GGBallComponent: MonoBehaviour {
 		this.shotAudioSource.pitch            = 1.0f + Random.Range(-this.shotPitchVariation, this.shotPitchVariation);
 		
 		if (magnitude >= this.bigShotForce) {
-			this.shotAudioSource.clip = this.bigShotAudioClip;
+			this.shotAudioSource.clip = this.GetRandomAudioClip(this.bigShotAudioClips);
 		}
 		else if (magnitude >= this.mediumShotForce) {
-			this.shotAudioSource.clip = this.mediumShotAudioClip;
+			this.shotAudioSource.clip = this.GetRandomAudioClip(this.mediumShotAudioClips);
 		}
 		else {
-			this.shotAudioSource.clip = this.smallShotAudioClip;
+			this.shotAudioSource.clip = this.GetRandomAudioClip(this.smallShotAudioClips);
 		}
 		
 		this.shotAudioSource.Play();
@@ -84,18 +84,26 @@ public class GGBallComponent: MonoBehaviour {
 				this.collisionAudioSource.pitch  = 1.0f + Random.Range(-this.collisionPitchVariation, this.collisionPitchVariation);
 				
 				switch (colliderName) {
-					case "Ground": this.collisionAudioSource.clip = this.grassAudioClip; break;
-					case "Wall":   this.collisionAudioSource.clip = this.rockAudioClip;  break;
-					case "Dirt":   this.collisionAudioSource.clip = this.dirtAudioClip;  break;
-					case "Grass":  this.collisionAudioSource.clip = this.grassAudioClip; break;
-					case "Sand":   this.collisionAudioSource.clip = this.sandAudioClip;  break;
-					case "Rock":   this.collisionAudioSource.clip = this.rockAudioClip;  break;
+					case "Ground": this.collisionAudioSource.clip = this.GetRandomAudioClip(this.grassAudioClips); break;
+					case "Wall":   this.collisionAudioSource.clip = this.GetRandomAudioClip(this.rockAudioClips);  break;
+					case "Dirt":   this.collisionAudioSource.clip = this.GetRandomAudioClip(this.dirtAudioClips);  break;
+					case "Grass":  this.collisionAudioSource.clip = this.GetRandomAudioClip(this.grassAudioClips); break;
+					case "Sand":   this.collisionAudioSource.clip = this.GetRandomAudioClip(this.sandAudioClips);  break;
+					case "Rock":   this.collisionAudioSource.clip = this.GetRandomAudioClip(this.rockAudioClips);  break;
 					default:       Debug.LogError("Audio event encountered unhandled collider name " + colliderName + "."); break;
 				}
 				
 				this.collisionAudioSource.Play();
 			}
 		}
+	}
+	
+	/* Getting audio clips. */
+	
+	private System.Random random = new System.Random();
+	
+	private AudioClip GetRandomAudioClip(AudioClip[] clips) {
+		return clips[random.Next(clips.Length)];
 	}
 	
 	/* Updating. */
