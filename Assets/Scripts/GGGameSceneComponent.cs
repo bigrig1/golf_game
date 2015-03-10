@@ -35,7 +35,8 @@ public class GGGameSceneComponent: MonoBehaviour {
 			}
 		}
 		
-		this.ballRigidbody2D = this.ball.rigidbody2D;
+		this.ballComponent   = this.ball.GetComponent<GGBallComponent>();
+		this.ballRigidbody2D = this.ball.GetComponent<Rigidbody2D>();
 		this.ballCollider    = this.ball.GetComponent<CircleCollider2D>();
 		this.arrowComponent  = this.arrow.GetComponent<GGArrowComponent>();
 	}
@@ -57,6 +58,9 @@ public class GGGameSceneComponent: MonoBehaviour {
 	// The ball object.
 	[HideInInspector]
 	public GameObject ball;
+	
+	// The ball's ball component.
+	public GGBallComponent ballComponent { get; private set; }
 	
 	// The ball's rigidbody component.
 	public Rigidbody2D ballRigidbody2D { get; private set; }

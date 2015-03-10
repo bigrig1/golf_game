@@ -31,7 +31,7 @@ public class GGInputComponent: MonoBehaviour {
 	public void FixedUpdate() {
 		this.UpdateArrow();
 		
-		if (this.ballHasBeenHit && GGGameSceneComponent.instance.ballRigidbody2D.IsSleeping()) {
+		if (this.ballHasBeenHit && GGGameSceneComponent.instance.ballRigidbody2D.isKinematic) {
 			this.ballHasBeenHit = false;
 		}
 	}
@@ -123,10 +123,9 @@ public class GGInputComponent: MonoBehaviour {
 	
 	private void Shoot() {
 		if (!this.ballHasBeenHit) {
-			var ballRigidbody2D = GGGameSceneComponent.instance.ballRigidbody2D;
-			var inputVector     = this.inputOrigin.Value - this.currentInput.Value;
+			var ballComponent = GGGameSceneComponent.instance.ballComponent;
+			ballComponent.Shoot((this.inputOrigin.Value - this.currentInput.Value) * GGInputComponent.inputForce);
 			this.ballHasBeenHit = true;
-			ballRigidbody2D.AddForce(inputVector * GGInputComponent.inputForce, ForceMode2D.Impulse);
 		}
 	}
 	
