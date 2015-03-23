@@ -30,19 +30,42 @@ public class GGPlatformComponent: MonoBehaviour {
 	// The colliders of each portion of the platform.
 	public List<PolygonCollider2D> colliders { get {
 		if (_colliders == null) {
-			_colliders     = new List<PolygonCollider2D>();
-			var transform  = this.transform;
-			var childCount = transform.childCount;
-			
-			for (var i = 0; i < childCount; i += 1) {
-				_colliders.Add(transform.GetChild(i).GetComponent<PolygonCollider2D>());
-			}
+			this.LoadCollidersAndHolePoints();
 		}
 		
 		return _colliders;
 	} }
 	
 	private List<PolygonCollider2D> _colliders;
+	
+	public List<Vector2> holePoints { get {
+		if (_holePoints == null) {
+			this.LoadCollidersAndHolePoints();
+		}
+		
+		return _holePoints;
+	} }
+	
+	private List<Vector2> _holePoints;
+	
+	private void LoadCollidersAndHolePoints() {
+		_colliders     = new List<PolygonCollider2D>();
+		_holePoints    = new List<Vector2>();
+		var transform  = this.transform;
+		var childCount = transform.childCount;
+		
+		for (var i = 0; i < childCount; i += 1) {
+			var childTransform = transform.GetChild(i);
+			
+			if (childTransform.gameObject.name == "Hole") {
+				_holePoints.Add(childTransform.localPosition);
+				Debug.Log(childTransform.localPosition);
+			}
+			else {
+				_colliders.Add(childTransform.GetComponent<PolygonCollider2D>());
+			}
+		}
+	}
 	
 	/* Getting information about the platform. */
 	

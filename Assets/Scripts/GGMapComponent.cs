@@ -422,7 +422,7 @@ public class GGMapComponent: MonoBehaviour {
 	/* Getting configuration values. */
 	
 	// The width of each map. This defines where walls and platforms are placed.
-	public const float mapWidth = 19.0f;
+	public const float mapWidth = 18.5f;
 	
 	// The full height of each map, from the bottom of the screen to the top.
 	public const float mapHeight = 36.0f;
