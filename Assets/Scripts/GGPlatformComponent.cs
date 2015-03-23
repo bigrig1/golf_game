@@ -59,7 +59,6 @@ public class GGPlatformComponent: MonoBehaviour {
 			
 			if (childTransform.gameObject.name == "Hole") {
 				_holePoints.Add(childTransform.localPosition);
-				Debug.Log(childTransform.localPosition);
 			}
 			else {
 				_colliders.Add(childTransform.GetComponent<PolygonCollider2D>());
@@ -68,31 +67,6 @@ public class GGPlatformComponent: MonoBehaviour {
 	}
 	
 	/* Getting information about the platform. */
-	
-	// The size of the rectangle that encloses the platform.
-	public Vector2 size { get {
-		if (_size == Vector2.zero) {
-			var minX = float.MaxValue;
-			var maxX = float.MinValue;
-			var minY = float.MaxValue;
-			var maxY = float.MinValue;
-			
-			foreach (var collider in this.colliders) {
-				foreach (var point in collider.points) {
-					minX = Mathf.Min(minX, point.x);
-					maxX = Mathf.Max(maxX, point.x);
-					minY = Mathf.Min(minY, point.y);
-					maxY = Mathf.Max(maxY, point.y);
-				}
-			}
-			
-			_size = new Vector2(maxX - minX, maxY - minY);
-		}
-		
-		return _size;
-	} }
-	
-	private Vector2 _size;
 	
 	// The platform's size class, which is based on its width.
 	public GGPlatformSizeClass sizeClass { get {
@@ -108,4 +82,57 @@ public class GGPlatformComponent: MonoBehaviour {
 			return GGPlatformSizeClass.Large;
 		}
 	} }
+	
+	// The size of the rectangle that encloses the platform.
+	public Vector2 size { get {
+		if (_size == Vector2.zero) {
+			this.CalculateSize();
+		}
+		
+		return _size;
+	} }
+	
+	private Vector2 _size;
+	
+	// The highest Y-point of the platform in its own local space.
+	public float highestLocalY { get {
+		if (_highestLocalY == float.MinValue) {
+			this.CalculateSize();
+		}
+		
+		return _highestLocalY;
+	} }
+	
+	private float _highestLocalY = float.MinValue;
+	
+	// The highest Y-point of the platform in world space.
+	public float highestY { get {
+		return this.transform.position.y + this.highestLocalY;
+	} }
+	
+	private void CalculateSize() {
+		var minX = float.MaxValue;
+		var maxX = float.MinValue;
+		var minY = float.MaxValue;
+		var maxY = float.MinValue;
+		
+		foreach (var collider in this.colliders) {
+			foreach (var point in collider.points) {
+				minX = Mathf.Min(minX, point.x);
+				maxX = Mathf.Max(maxX, point.x);
+				minY = Mathf.Min(minY, point.y);
+				maxY = Mathf.Max(maxY, point.y);
+			}
+		}
+		
+		_size          = new Vector2(maxX - minX, maxY - minY);
+		_highestLocalY = maxY;
+	}
+	
+	/* Managing the platform's hole. */
+	
+	// Adds a hole to the platform at a randomly-chosen hole point.
+	public void AddHole() {
+		// TODO
+	}
 }

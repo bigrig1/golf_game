@@ -245,6 +245,25 @@ public class GGMapComponent: MonoBehaviour {
 		for (var i = 0; i < sectionCount; i += 1) {
 			this.AddPlatformSection(i, groundOffset, sectionMaxYs, sectionCount, platformArrangements, totalPlatformFrequency, isNextMap, random);
 		}
+		
+		GGPlatformComponent highestPlatformComponent = null;
+		var highestPlatformY                         = 0.0f;
+		
+		foreach (var platformComponent in (isNextMap ? this.nextPlatformComponents : this.platformComponents)) {
+			var y = platformComponent.highestY;
+			
+			if (y > highestPlatformY) {
+				highestPlatformComponent = platformComponent;
+				highestPlatformY         = y;
+			}
+		}
+		
+		if (highestPlatformComponent != null) {
+			highestPlatformComponent.AddHole();
+		}
+		else {
+			Debug.LogError("Failed to find a platform to place a hole on.");
+		}
 	}
 	
 	// Adds all the platforms for the given section.
