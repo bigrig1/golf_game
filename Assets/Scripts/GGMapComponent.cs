@@ -259,7 +259,7 @@ public class GGMapComponent: MonoBehaviour {
 		}
 		
 		if (highestPlatformComponent != null) {
-			highestPlatformComponent.AddHole();
+			highestPlatformComponent.AddHole(random);
 		}
 		else {
 			Debug.LogError("Failed to find a platform to place a hole on.");

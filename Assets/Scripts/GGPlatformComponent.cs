@@ -132,7 +132,10 @@ public class GGPlatformComponent: MonoBehaviour {
 	/* Managing the platform's hole. */
 	
 	// Adds a hole to the platform at a randomly-chosen hole point.
-	public void AddHole() {
-		// TODO
+	public void AddHole(System.Random random) {
+		var holePoint                = this.holePoints[random.Next(this.holePoints.Count)];
+		var hole                     = GameObject.Instantiate(Resources.Load("Prefabs/Hole")) as GameObject;
+		hole.transform.parent        = this.transform;
+		hole.transform.localPosition = new Vector3(holePoint.x, holePoint.y, -0.5f);
 	}
 }

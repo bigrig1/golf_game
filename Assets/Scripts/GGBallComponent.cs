@@ -9,10 +9,9 @@ public class GGBallComponent: MonoBehaviour {
 	/* Initializing. */
 	
 	public void Start() {
-		this.renderer.material.color = GGBallComponent.color;
-		this.rigidbody2D             = this.GetComponent<Rigidbody2D>();
-		this.shotAudioSource         = this.transform.Find("Shot Audio").GetComponent<AudioSource>();
-		this.collisionAudioSource    = this.transform.Find("Collision Audio").GetComponent<AudioSource>();
+		this.rigidbody2D          = this.GetComponent<Rigidbody2D>();
+		this.shotAudioSource      = this.transform.Find("Shot Audio").GetComponent<AudioSource>();
+		this.collisionAudioSource = this.transform.Find("Collision Audio").GetComponent<AudioSource>();
 	}
 	
 	/* Configuring the component. */
@@ -130,8 +129,4 @@ public class GGBallComponent: MonoBehaviour {
 			}
 		}
 	}
-	
-	/* Getting configuration values. */
-	
-	public static Color color = new Color(1.0f, 0.92f, 0.81f);
 }
