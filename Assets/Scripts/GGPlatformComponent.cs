@@ -2,9 +2,13 @@
 // The component that manages platform objects.
 //
 
+using ClipperLib;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+using ClipperPath  = System.Collections.Generic.List<ClipperLib.IntPoint>;
+using ClipperPaths = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
 public class GGPlatformComponent: MonoBehaviour {
 	/* Initializing. */
@@ -30,7 +34,7 @@ public class GGPlatformComponent: MonoBehaviour {
 	// The colliders of each portion of the platform.
 	public List<PolygonCollider2D> colliders { get {
 		if (_colliders == null) {
-			this.LoadCollidersAndHolePoints();
+			this.LoadColliders();
 		}
 		
 		return _colliders;
@@ -38,19 +42,11 @@ public class GGPlatformComponent: MonoBehaviour {
 	
 	private List<PolygonCollider2D> _colliders;
 	
-	public List<Vector2> holePoints { get {
-		if (_holePoints == null) {
-			this.LoadCollidersAndHolePoints();
-		}
-		
-		return _holePoints;
-	} }
+	// The platform component's hole if it has one.
+	public GameObject hole { get; private set; }
 	
-	private List<Vector2> _holePoints;
-	
-	private void LoadCollidersAndHolePoints() {
+	private void LoadColliders() {
 		_colliders     = new List<PolygonCollider2D>();
-		_holePoints    = new List<Vector2>();
 		var transform  = this.transform;
 		var childCount = transform.childCount;
 		
@@ -58,7 +54,7 @@ public class GGPlatformComponent: MonoBehaviour {
 			var childTransform = transform.GetChild(i);
 			
 			if (childTransform.gameObject.name == "Hole") {
-				_holePoints.Add(childTransform.localPosition);
+				this.hole = childTransform.gameObject;
 			}
 			else {
 				_colliders.Add(childTransform.GetComponent<PolygonCollider2D>());
@@ -127,15 +123,5 @@ public class GGPlatformComponent: MonoBehaviour {
 		
 		_size          = new Vector2(maxX - minX, maxY - minY);
 		_highestLocalY = maxY;
-	}
-	
-	/* Managing the platform's hole. */
-	
-	// Adds a hole to the platform at a randomly-chosen hole point.
-	public void AddHole(System.Random random) {
-		var holePoint                = this.holePoints[random.Next(this.holePoints.Count)];
-		var hole                     = GameObject.Instantiate(Resources.Load("Prefabs/Hole")) as GameObject;
-		hole.transform.parent        = this.transform;
-		hole.transform.localPosition = new Vector3(holePoint.x, holePoint.y, -0.5f);
 	}
 }

@@ -48,21 +48,27 @@ public class GGMapComponent: MonoBehaviour {
 	
 	/* Managing map component prototypes. */
 	
-	// The platform components for the platform prototypes, grouped by size class.
+	// The platform components for the platform prototypes, grouped by size class and hole presence.
 	[HideInInspector]
-	public List<GameObject> smallPlatformPrototypes  = new List<GameObject>();
+	public List<GameObject> smallPlatformPrototypesWithoutHole = new List<GameObject>();
 	[HideInInspector]
-	public List<GameObject> mediumPlatformPrototypes = new List<GameObject>();
+	public List<GameObject> mediumPlatformPrototypesWithoutHole = new List<GameObject>();
 	[HideInInspector]
-	public List<GameObject> largePlatformPrototypes  = new List<GameObject>();
+	public List<GameObject> largePlatformPrototypesWithoutHole = new List<GameObject>();
+	[HideInInspector]
+	public List<GameObject> smallPlatformPrototypesWithHole = new List<GameObject>();
+	[HideInInspector]
+	public List<GameObject> mediumPlatformPrototypesWithHole = new List<GameObject>();
+	[HideInInspector]
+	public List<GameObject> largePlatformPrototypesWithHole = new List<GameObject>();
 	
 	// The wall components for the wall prototypes, grouped by size class.
 	[HideInInspector]
-	public List<GameObject> smallWallPrototypes  = new List<GameObject>();
+	public List<GameObject> smallWallPrototypes = new List<GameObject>();
 	[HideInInspector]
 	public List<GameObject> mediumWallPrototypes = new List<GameObject>();
 	[HideInInspector]
-	public List<GameObject> largeWallPrototypes  = new List<GameObject>();
+	public List<GameObject> largeWallPrototypes = new List<GameObject>();
 	
 	/* Building maps. */
 	
@@ -246,24 +252,17 @@ public class GGMapComponent: MonoBehaviour {
 			this.AddPlatformSection(i, groundOffset, sectionMaxYs, sectionCount, platformArrangements, totalPlatformFrequency, isNextMap, random);
 		}
 		
-		GGPlatformComponent highestPlatformComponent = null;
-		var highestPlatformY                         = 0.0f;
+		// GGPlatformComponent highestPlatformComponent = null;
+		// var highestPlatformY                         = 0.0f;
 		
-		foreach (var platformComponent in (isNextMap ? this.nextPlatformComponents : this.platformComponents)) {
-			var y = platformComponent.highestY;
+		// foreach (var platformComponent in (isNextMap ? this.nextPlatformComponents : this.platformComponents)) {
+		// 	var y = platformComponent.highestY;
 			
-			if (y > highestPlatformY) {
-				highestPlatformComponent = platformComponent;
-				highestPlatformY         = y;
-			}
-		}
-		
-		if (highestPlatformComponent != null) {
-			highestPlatformComponent.AddHole(random);
-		}
-		else {
-			Debug.LogError("Failed to find a platform to place a hole on.");
-		}
+		// 	if (y > highestPlatformY) {
+		// 		highestPlatformComponent = platformComponent;
+		// 		highestPlatformY         = y;
+		// 	}
+		// }
 	}
 	
 	// Adds all the platforms for the given section.
@@ -323,11 +322,14 @@ public class GGMapComponent: MonoBehaviour {
 		for (var i = 0; i < selectedSizeClasses.Length; i += 1) {
 			List<GameObject> platformPrototypes = null;
 			
+			// TEMP
+			var needsHole = false;
+			
 			switch (selectedSizeClasses[i]) {
-				case GGPlatformSizeClass.Small:  platformPrototypes = this.smallPlatformPrototypes;  break;
-				case GGPlatformSizeClass.Medium: platformPrototypes = this.mediumPlatformPrototypes; break;
-				case GGPlatformSizeClass.Large:  platformPrototypes = this.largePlatformPrototypes;  break;
-				default:                         Debug.LogError("Unhandled platform size class.");   break;
+				case GGPlatformSizeClass.Small:  platformPrototypes = needsHole ? this.smallPlatformPrototypesWithHole  : this.smallPlatformPrototypesWithoutHole;  break;
+				case GGPlatformSizeClass.Medium: platformPrototypes = needsHole ? this.mediumPlatformPrototypesWithHole : this.mediumPlatformPrototypesWithoutHole; break;
+				case GGPlatformSizeClass.Large:  platformPrototypes = needsHole ? this.largePlatformPrototypesWithHole  : this.largePlatformPrototypesWithoutHole;  break;
+				default:                         Debug.LogError("Unhandled platform size class.");                                                                  break;
 			}
 			
 			// TODO: We need to make sure not to use the same arrangement twice in a row. Would also
@@ -410,11 +412,21 @@ public class GGMapComponent: MonoBehaviour {
 	public void LoadPlatformPrototype(GameObject platform) {
 		var platformComponent = platform.GetComponent<GGPlatformComponent>();
 		
-		switch (platformComponent.sizeClass) {
-			case GGPlatformSizeClass.Small:  this.smallPlatformPrototypes.Add(platform);       break;
-			case GGPlatformSizeClass.Medium: this.mediumPlatformPrototypes.Add(platform);      break;
-			case GGPlatformSizeClass.Large:  this.largePlatformPrototypes.Add(platform);       break;
-			default:                         Debug.LogError("Unhandled platform size class."); break;
+		if (platformComponent.hole != null) {
+			switch (platformComponent.sizeClass) {
+				case GGPlatformSizeClass.Small:  this.smallPlatformPrototypesWithHole.Add(platform);  break;
+				case GGPlatformSizeClass.Medium: this.mediumPlatformPrototypesWithHole.Add(platform); break;
+				case GGPlatformSizeClass.Large:  this.largePlatformPrototypesWithHole.Add(platform);  break;
+				default:                         Debug.LogError("Unhandled platform size class.");    break;
+			}
+		}
+		else {
+			switch (platformComponent.sizeClass) {
+				case GGPlatformSizeClass.Small:  this.smallPlatformPrototypesWithoutHole.Add(platform);  break;
+				case GGPlatformSizeClass.Medium: this.mediumPlatformPrototypesWithoutHole.Add(platform); break;
+				case GGPlatformSizeClass.Large:  this.largePlatformPrototypesWithoutHole.Add(platform);  break;
+				default:                         Debug.LogError("Unhandled platform size class.");       break;
+			}
 		}
 		
 		platform.SetActive(false);
