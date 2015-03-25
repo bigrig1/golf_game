@@ -136,7 +136,7 @@ public class GGMapComponent: MonoBehaviour {
 	// get the same map for a given map index. If isNextMap is true, the walls and platforms will be
 	// added to the next
 	private void BuildMap(int mapIndex, bool isNextMap) {
-		var random = new System.Random(168403912 + mapIndex);
+		var random = new System.Random(168403912 + mapIndex + 8);
 		this.AddWalls(isNextMap, random);
 		this.AddPlatforms(mapIndex, isNextMap, random);
 		this.groundComponent.gameObject.SetActive(mapIndex <= 1);
