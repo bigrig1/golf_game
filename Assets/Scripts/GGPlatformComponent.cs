@@ -2,13 +2,9 @@
 // The component that manages platform objects.
 //
 
-using ClipperLib;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-using ClipperPath  = System.Collections.Generic.List<ClipperLib.IntPoint>;
-using ClipperPaths = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
 public class GGPlatformComponent: MonoBehaviour {
 	/* Initializing. */
@@ -42,8 +38,11 @@ public class GGPlatformComponent: MonoBehaviour {
 	
 	private List<PolygonCollider2D> _colliders;
 	
-	// The platform component's hole if it has one.
+	// The platform component's hole object if it has one.
 	public GameObject hole { get; private set; }
+	
+	// The trigger object for the platform
+	// public 
 	
 	private void LoadColliders() {
 		_colliders     = new List<PolygonCollider2D>();
