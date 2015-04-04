@@ -80,4 +80,9 @@ public class GGGameSceneComponent: MonoBehaviour {
 	
 	// The physics component.
 	public GGPhysicsComponent physicsComponent { get; private set; }
+	
+	/* Accessing game state. */
+	
+	// The number of sheep the player has collected.
+	public int sheepCount = 0;
 }
