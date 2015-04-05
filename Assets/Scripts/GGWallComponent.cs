@@ -80,12 +80,26 @@ public class GGWallComponent: MonoBehaviour {
 			return false;
 		}
 		
+		var isOnRightSide = this.transform.localScale.x < 0.0f;
+		var sheepOffset   = new Vector2(-0.625f, 0.825f);
+		
+		if (isOnRightSide) {
+			sheepOffset.x *= -1.0f;
+		}
+		
 		var sheep           = GameObject.Instantiate(Resources.Load("Prefabs/Sheep")) as GameObject;
 		var sheepTransform  = sheep.transform;
 		var spawnPointIndex = random.Next(0, this.sheepSpawnPoints.Count);
 		sheep.name          = "Sheep";
-		sheepTransform.SetParent(this.transform, true);
-		sheepTransform.localPosition = sheepSpawnPoints[spawnPointIndex] + new Vector2(-0.625f, 0.825f);
+		sheepTransform.SetParent(this.transform, false);
+		sheepTransform.localPosition = sheepSpawnPoints[spawnPointIndex] + sheepOffset;
+		
+		if (isOnRightSide) {
+			var scale                 = sheepTransform.localScale;
+			scale.x                  *= -1.0f;
+			sheepTransform.localScale = scale;
+		}
+		
 		return true;
 	}
 }
