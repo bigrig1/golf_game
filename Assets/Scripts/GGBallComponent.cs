@@ -49,6 +49,10 @@ public class GGBallComponent: MonoBehaviour {
 	private AudioSource shotAudioSource;
 	private AudioSource collisionAudioSource;
 	
+	/* Getting information about the ball. */
+	
+	public bool isInHole { get; private set; }
+	
 	/* Shooting the ball. */
 	
 	public void Shoot(Vector2 force) {
@@ -106,6 +110,14 @@ public class GGBallComponent: MonoBehaviour {
 		}
 	}
 	
+	public void OnTriggerEnter2D(Collider2D collider) {
+		this.isInHole = true;
+	}
+	
+	public void OnTriggerStay2D(Collider2D collider) {
+		this.isInHole = true;
+	}
+	
 	/* Getting audio clips. */
 	
 	private System.Random random = new System.Random();
@@ -131,5 +143,7 @@ public class GGBallComponent: MonoBehaviour {
 				this.durationUnderForceSleepThreshold = 0.0f;
 			}
 		}
+		
+		this.isInHole = false;
 	}
 }

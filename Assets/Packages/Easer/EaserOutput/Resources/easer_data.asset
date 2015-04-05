@@ -1,0 +1,466 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 123ca600d01729e4e86eeda9f7781e8c, type: 3}
+  m_Name: easer_data
+  m_EditorClassIdentifier: 
+  data:
+    eases:
+    - name: InSine
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+        - time: 1
+          value: 1
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+    - name: OutSine
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
+        - time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+    - name: InOutSine
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+        - time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+    - name: InBack
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: .105434291
+          outSlope: .105434291
+          tangentMode: 10
+        - time: .685105741
+          value: .0722336397
+          inSlope: 1.52585661
+          outSlope: 1.52585661
+          tangentMode: 10
+        - time: 1
+          value: 1
+          inSlope: 2.94627905
+          outSlope: 2.94627905
+          tangentMode: 10
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+    - name: OutBack
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: 2.83129478
+          outSlope: 2.83129478
+          tangentMode: 10
+        - time: .332269132
+          value: .940751851
+          inSlope: 1.46001267
+          outSlope: 1.46001267
+          tangentMode: 10
+        - time: 1
+          value: 1
+          inSlope: .0887305811
+          outSlope: .0887305811
+          tangentMode: 10
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+    - name: InOutBack
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 10
+        - time: .367829978
+          value: 0
+          inSlope: 1.89154208
+          outSlope: 1.89154208
+          tangentMode: 10
+        - time: .631628394
+          value: .997971594
+          inSlope: 1.89429533
+          outSlope: 1.89429533
+          tangentMode: 10
+        - time: 1
+          value: 1
+          inSlope: .00550641166
+          outSlope: .00550641166
+          tangentMode: 10
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+    - name: InCubic
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+        - time: .67206347
+          value: .296343803
+          inSlope: 1.29332733
+          outSlope: 1.29332733
+          tangentMode: 10
+        - time: 1
+          value: 1
+          inSlope: 2.14570856
+          outSlope: 2.14570856
+          tangentMode: 10
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+    - name: OutCubic
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: 2.17219257
+          outSlope: 2.17219257
+          tangentMode: 10
+        - time: .315321356
+          value: .684938729
+          inSlope: 1.30265951
+          outSlope: 1.30265951
+          tangentMode: 0
+        - time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+    - name: InOutCubic
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+        - time: .357269764
+          value: .176957682
+          inSlope: 1.46061182
+          outSlope: 1.46061182
+          tangentMode: 0
+        - time: .648503184
+          value: .825676739
+          inSlope: 1.50024891
+          outSlope: 1.50024891
+          tangentMode: 0
+        - time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+    - name: InElastic
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: .0203230493
+          outSlope: .0203230493
+          tangentMode: 10
+        - time: .0997693241
+          value: .00202761684
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+        - time: .35021776
+          value: .00608286448
+          inSlope: .36214295
+          outSlope: .36214295
+          tangentMode: 0
+        - time: .445377976
+          value: .0120020509
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+        - time: .624495029
+          value: 0
+          inSlope: 1.86039889
+          outSlope: 1.86039889
+          tangentMode: 0
+        - time: .725126863
+          value: .132814661
+          inSlope: -.224869713
+          outSlope: -.224869713
+          tangentMode: 0
+        - time: .934809446
+          value: .098034814
+          inSlope: 13.09519
+          outSlope: 13.09519
+          tangentMode: 0
+        - time: 1
+          value: .997972369
+          inSlope: 13.8047237
+          outSlope: 13.8047237
+          tangentMode: 10
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+    - name: OutElastic
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: 12.8071775
+          outSlope: 12.8071775
+          tangentMode: 10
+        - time: .0776060745
+          value: .993914783
+          inSlope: 13.9282923
+          outSlope: 13.9282923
+          tangentMode: 0
+        - time: .281725794
+          value: .862038732
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+        - time: .375345647
+          value: 1
+          inSlope: 1.64845145
+          outSlope: 1.64845145
+          tangentMode: 0
+        - time: .602270663
+          value: .985828876
+          inSlope: .376976252
+          outSlope: .376976252
+          tangentMode: 0
+        - time: .899637759
+          value: .99500531
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+        - time: 1
+          value: 1
+          inSlope: .0497666299
+          outSlope: .0497666299
+          tangentMode: 10
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+    - name: InOutElastic
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 10
+        - time: .0976135284
+          value: 0
+          inSlope: -.170037076
+          outSlope: -.170037076
+          tangentMode: 0
+        - time: .249372303
+          value: 0
+          inSlope: -.567838132
+          outSlope: -.567838132
+          tangentMode: 0
+        - time: .309875041
+          value: 0
+          inSlope: 1.68682063
+          outSlope: 1.68682063
+          tangentMode: 0
+        - time: .381313562
+          value: .0283762068
+          inSlope: -3.48098612
+          outSlope: -3.48098612
+          tangentMode: 0
+        - time: .469942033
+          value: .0970297828
+          inSlope: 17.1133842
+          outSlope: 17.1133842
+          tangentMode: 0
+        - time: .529729724
+          value: .938254714
+          inSlope: 13.9144955
+          outSlope: 13.9144955
+          tangentMode: 0
+        - time: .648478568
+          value: .937119722
+          inSlope: 1.69531083
+          outSlope: 1.69531083
+          tangentMode: 0
+        - time: .764562011
+          value: 1
+          inSlope: -.685987949
+          outSlope: -.685987949
+          tangentMode: 0
+        - time: .836491227
+          value: 1
+          inSlope: .299105942
+          outSlope: .299105942
+          tangentMode: 0
+        - time: .920811653
+          value: 1
+          inSlope: -.422694445
+          outSlope: -.422694445
+          tangentMode: 0
+        - time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+    - name: InBounce
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: .413917363
+          outSlope: 1.32678711
+          tangentMode: 1
+        - time: .0895471424
+          value: 0
+          inSlope: -1.18941605
+          outSlope: 2.11396885
+          tangentMode: 1
+        - time: .271930575
+          value: 0
+          inSlope: -2.31377816
+          outSlope: 2.40335369
+          tangentMode: 1
+        - time: .644699752
+          value: 0
+          inSlope: -2.12236381
+          outSlope: 5.87887764
+          tangentMode: 1
+        - time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+    - name: OutBounce
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: -.119761765
+          outSlope: -.119761765
+          tangentMode: 0
+        - time: .368106306
+          value: 1
+          inSlope: 5.1809597
+          outSlope: -2.39378691
+          tangentMode: 1
+        - time: .728816807
+          value: 1
+          inSlope: 2.59880066
+          outSlope: -2.09464717
+          tangentMode: 1
+        - time: .918033063
+          value: 1
+          inSlope: 1.94265056
+          outSlope: -1.25182343
+          tangentMode: 1
+        - time: 1
+          value: 1
+          inSlope: 1.19661129
+          outSlope: 0
+          tangentMode: 1
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+    - name: InOutBounce
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: 1
+          outSlope: 1
+          tangentMode: 1
+        - time: .0520503893
+          value: 0
+          inSlope: -.991181195
+          outSlope: 1.31477785
+          tangentMode: 1
+        - time: .136603221
+          value: 0
+          inSlope: -1.63319468
+          outSlope: 2.39125371
+          tangentMode: 1
+        - time: .320300251
+          value: 0
+          inSlope: -3.02565956
+          outSlope: 5.48653841
+          tangentMode: 1
+        - time: .499997944
+          value: .499999881
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+        - time: .677642524
+          value: 1
+          inSlope: 6.13548756
+          outSlope: -2.0639565
+          tangentMode: 1
+        - time: .862972438
+          value: 1
+          inSlope: 3.16273999
+          outSlope: -1.12399364
+          tangentMode: 1
+        - time: .953996718
+          value: 1
+          inSlope: 1.46314716
+          outSlope: -1.01386189
+          tangentMode: 1
+        - time: 1
+          value: 1
+          inSlope: 1
+          outSlope: 1
+          tangentMode: 1
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+  current: 0

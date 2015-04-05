@@ -23,40 +23,43 @@ public class GGPlatformComponent: MonoBehaviour {
 				default:      Debug.LogError("Unhandled platform child name: " + name); break;
 			}
 		}
+		
+		this.LoadCollidersIfNeeded();
 	}
 	
 	/* Getting child objects and components. */
 	
 	// The colliders of each portion of the platform.
 	public List<PolygonCollider2D> colliders { get {
-		if (_colliders == null) {
-			this.LoadColliders();
-		}
-		
+		this.LoadCollidersIfNeeded();
 		return _colliders;
 	} }
 	
 	private List<PolygonCollider2D> _colliders;
 	
 	// The platform component's hole object if it has one.
-	public GameObject hole { get; private set; }
+	public GameObject hole { get {
+		this.LoadCollidersIfNeeded();
+		return _hole;
+	} }
 	
-	// The trigger object for the platform
-	// public 
+	private GameObject _hole; 
 	
-	private void LoadColliders() {
-		_colliders     = new List<PolygonCollider2D>();
-		var transform  = this.transform;
-		var childCount = transform.childCount;
-		
-		for (var i = 0; i < childCount; i += 1) {
-			var childTransform = transform.GetChild(i);
+	private void LoadCollidersIfNeeded() {
+		if (_colliders == null) {
+			_colliders     = new List<PolygonCollider2D>();
+			var transform  = this.transform;
+			var childCount = transform.childCount;
 			
-			if (childTransform.gameObject.name == "Hole") {
-				this.hole = childTransform.gameObject;
-			}
-			else {
-				_colliders.Add(childTransform.GetComponent<PolygonCollider2D>());
+			for (var i = 0; i < childCount; i += 1) {
+				var childTransform = transform.GetChild(i);
+				
+				if (childTransform.gameObject.name == "Hole") {
+					_hole = childTransform.gameObject;
+				}
+				else {
+					_colliders.Add(childTransform.GetComponent<PolygonCollider2D>());
+				}
 			}
 		}
 	}

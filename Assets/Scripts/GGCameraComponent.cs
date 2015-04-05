@@ -8,19 +8,37 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GGCameraComponent: MonoBehaviour {
-	/* Initializing. */
+	/* Moving the camera. */
 	
-	public void Awake() {
-		// Nothing yet.
+	public void MoveToNextMap() {
+		this.moveStartTime = Time.time;
+		this.moveStartY    = this.transform.position.y;
 	}
 	
-	/* Updaing. */
+	/* Updating. */
+	
+	private float moveStartTime = 0.0f;
+	private float moveStartY    = 0.0f;
 	
 	public void Update() {
-		// this.transform.Translate(new Vector3(0.0f, 1.75f * Time.deltaTime, 0.0f));
+		if (this.moveStartTime > 0.0f) {
+			var mapComponent        = GGGameSceneComponent.instance.mapComponent;
+			var relativeMapIndex    = mapComponent.currentMapIndex - mapComponent.initialMapIndex;
+			var targetY             = GGMapComponent.mapHeight * ((float)relativeMapIndex + 0.5f);
+			var duration            = Time.time - this.moveStartTime;
+			var progress            = Mathf.Clamp01(duration / GGCameraComponent.mapChangeDuration);
+			var position            = this.transform.position;
+			position.y              = Easer.Ease(EaserEase.InOutSine, this.moveStartY, targetY, progress);
+			this.transform.position = position;
+			
+			if (progress >= 1.0f) {
+				this.moveStartTime = 0.0f;
+				this.moveStartY    = 0.0f;
+			}
+		}
 	}
 	
 	/* Getting configuration values. */
 	
-	// TODO
+	public const float mapChangeDuration = 1.5f;
 }

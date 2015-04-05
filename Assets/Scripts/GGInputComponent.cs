@@ -31,8 +31,15 @@ public class GGInputComponent: MonoBehaviour {
 	public void FixedUpdate() {
 		this.UpdateArrow();
 		
-		if (this.ballHasBeenHit && GGGameSceneComponent.instance.ballRigidbody2D.isKinematic) {
+		var gameSceneComponent = GGGameSceneComponent.instance;
+		
+		if (this.ballHasBeenHit && gameSceneComponent.ballRigidbody2D.isKinematic) {
 			this.ballHasBeenHit = false;
+			
+			if (gameSceneComponent.ballComponent.isInHole) {
+				gameSceneComponent.mapComponent.BuildNextMap();
+				gameSceneComponent.cameraComponent.MoveToNextMap();
+			}
 		}
 	}
 	

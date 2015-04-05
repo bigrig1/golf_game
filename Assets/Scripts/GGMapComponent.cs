@@ -72,6 +72,7 @@ public class GGMapComponent: MonoBehaviour {
 	
 	/* Building maps. */
 	
+	public int initialMapIndex { get; private set; }
 	public int currentMapIndex { get; private set; }
 	private float yOffset = 0.0f;
 	private bool shouldCreateDebugObjects = false;
@@ -79,6 +80,7 @@ public class GGMapComponent: MonoBehaviour {
 	// Builds the first map of the game. An initial map index can be passed in to start at an
 	// arbitrary map.
 	public void BuildFirstMap(int initialMapIndex) {
+		this.initialMapIndex = initialMapIndex;
 		this.currentMapIndex = initialMapIndex;
 		this.BuildMap(this.currentMapIndex, false);
 		this.yOffset += GGMapComponent.mapHeight;
@@ -140,7 +142,7 @@ public class GGMapComponent: MonoBehaviour {
 		this.AddWalls(isNextMap, random);
 		this.AddPlatforms(mapIndex, isNextMap, random);
 		this.AddSheeps(isNextMap, random);
-		this.groundComponent.gameObject.SetActive(mapIndex <= 1);
+		this.groundComponent.gameObject.SetActive(mapIndex <= 2);
 		
 		if (isNextMap) {
 			foreach (var platformComponent in this.nextPlatformComponents) {
@@ -320,11 +322,12 @@ public class GGMapComponent: MonoBehaviour {
 			boundsX            = bounds.xMax + minHorizontalSpacing;
 		}
 		
+		var indexOfPlatformWithHole = index == sectionCount - 1 ? random.Next(0, selectedSizeClasses.Length) : -1;
+		
 		for (var i = 0; i < selectedSizeClasses.Length; i += 1) {
 			List<GameObject> platformPrototypes = null;
 			
-			// TEMP
-			var needsHole = false;
+			var needsHole = i == indexOfPlatformWithHole;
 			
 			switch (selectedSizeClasses[i]) {
 				case GGPlatformSizeClass.Small:  platformPrototypes = needsHole ? this.smallPlatformPrototypesWithHole  : this.smallPlatformPrototypesWithoutHole;  break;

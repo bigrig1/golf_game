@@ -39,6 +39,7 @@ public class GGGameSceneComponent: MonoBehaviour {
 		this.ballRigidbody2D = this.ball.GetComponent<Rigidbody2D>();
 		this.ballCollider    = this.ball.GetComponent<CircleCollider2D>();
 		this.arrowComponent  = this.arrow.GetComponent<GGArrowComponent>();
+		this.cameraComponent = Camera.main.GetComponent<GGCameraComponent>();
 	}
 	
 	/* Accessing the component. */
@@ -80,6 +81,9 @@ public class GGGameSceneComponent: MonoBehaviour {
 	
 	// The physics component.
 	public GGPhysicsComponent physicsComponent { get; private set; }
+	
+	// The camera component.
+	public GGCameraComponent cameraComponent { get; private set; }
 	
 	/* Accessing game state. */
 	
