@@ -139,6 +139,7 @@ public class GGMapComponent: MonoBehaviour {
 		var random = new System.Random(168403912 + mapIndex + 8);
 		this.AddWalls(isNextMap, random);
 		this.AddPlatforms(mapIndex, isNextMap, random);
+		this.AddSheeps(isNextMap, random);
 		this.groundComponent.gameObject.SetActive(mapIndex <= 1);
 		
 		if (isNextMap) {
@@ -382,6 +383,45 @@ public class GGMapComponent: MonoBehaviour {
 				debugObject.renderer.material.color = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
 			}
 		}
+	}
+	
+	private void AddSheeps(bool isNextMap, System.Random random) {
+		var sheepCountChance = random.NextDouble();
+		
+		if (sheepCountChance > 0.95) {
+			// Two sheep.
+			this.AddWallSheep(isNextMap, random);
+			this.AddPlatformSheep(isNextMap, random);
+		}
+		else if (sheepCountChance > .6) {
+			// One sheep.
+			if (random.NextDouble() > 0.8f) {
+				this.AddPlatformSheep(isNextMap, random);
+			}
+			else {
+				this.AddWallSheep(isNextMap, random);
+			}
+		}
+	}
+	
+	private void AddWallSheep(bool isNextMap, System.Random random) {
+		// This is a pretty janky way of doing this, but it's easy.
+		var wallComponents  = isNextMap ? this.nextWallComponents : this.wallComponents;
+		var maxAttemptCount = 12;
+		
+		for (var i = 0; i < maxAttemptCount; i += 1) {
+			var wallIndex     = random.Next(0, wallComponents.Count);
+			var wallComponent = wallComponents[wallIndex];
+			
+			if (wallComponent.SpawnSheep(random)) {
+				return;
+			}
+		}
+	}
+	
+	private void AddPlatformSheep(bool isNextMap, System.Random random) {
+		// TODO
+		Debug.Log("Spawn a platform sheep!");
 	}
 	
 	private GGPlatformArrangement[] PlatformArrangementsForMapIndex(int index) {

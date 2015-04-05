@@ -92,8 +92,8 @@ public class GGArrowComponent: MonoBehaviour {
 	
 	/* Getting configuration values. */
 	
-	public static Color standardColor = new Color(0.29f, 0.53f, 0.92f, 1.0f);
-	public static Color fadedColor    = new Color(0.51f, 0.75f, 0.92f, 1.0f);
+	public static Color standardColor = new Color(0.22f, 0.45f, 0.82f, 1.0f);
+	public static Color fadedColor    = new Color(0.41f, 0.65f, 0.80f, 1.0f);
 	public const  float headWidth     = 0.6f;
 	public const  float headHeight    = 0.475f;
 	public const  float bodyThickness = 0.115f;

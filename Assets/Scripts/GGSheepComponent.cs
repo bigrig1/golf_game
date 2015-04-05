@@ -68,10 +68,10 @@ public class GGSheepComponent: MonoBehaviour {
 		animator.SetBool("Is Parachuting", this.isParachuting);
 		
 		if (this.isFalling || this.isParachuting) {
-			var screenPosition = Camera.main.WorldToScreenPoint(transform.position);
+			var screenPosition = Camera.main.WorldToViewportPoint(transform.position);
 			
-			if (screenPosition.y < 150.0f) {
-				Debug.Log("DONE");
+			if (screenPosition.y < -0.2f) {
+				GameObject.Destroy(this.gameObject);
 			}
 		}
 	}

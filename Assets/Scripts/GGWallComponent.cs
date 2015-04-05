@@ -3,6 +3,7 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GGWallComponent: MonoBehaviour {
@@ -10,6 +11,7 @@ public class GGWallComponent: MonoBehaviour {
 	
 	public void Start() {
 		this.collider2D.sharedMaterial = GGGameSceneComponent.instance.physicsComponent.rockMaterial;
+		this.SetSheepSpawnPointsIfNeeded();
 	}
 	
 	/* Getting information about the wall. */
@@ -43,4 +45,47 @@ public class GGWallComponent: MonoBehaviour {
 		
 		return GGWallSizeClass.Small;
 	} }
+	
+	// The points in the local space of this wall that sheep can spawn, if any.
+	public List<Vector2> sheepSpawnPoints { get {
+		this.SetSheepSpawnPointsIfNeeded();
+		return _sheepSpawnPoints;
+	} }
+	
+	private List<Vector2> _sheepSpawnPoints;
+	
+	private void SetSheepSpawnPointsIfNeeded() {
+		if (_sheepSpawnPoints == null) {
+			_sheepSpawnPoints = new List<Vector2>();
+			var transform     = this.transform;
+			var childCount    = transform.childCount;
+			
+			for (var i = 0; i < childCount; i += 1) {
+				var childTransform = transform.GetChild(i);
+				
+				if (childTransform.gameObject.name == "Sheep Spawn") {
+					this.sheepSpawnPoints.Add(childTransform.localPosition);
+					// childTransform.gameObject.SetActive(false);
+					GameObject.Destroy(childTransform.gameObject);
+				}
+			}
+		}
+	}
+	
+	/* Spawning sheep. */
+	
+	// Spawns a sheep if possible. Returns whether a sheep was spawned or not.
+	public bool SpawnSheep(System.Random random) {
+		if (this.sheepSpawnPoints.Count == 0) {
+			return false;
+		}
+		
+		var sheep           = GameObject.Instantiate(Resources.Load("Prefabs/Sheep")) as GameObject;
+		var sheepTransform  = sheep.transform;
+		var spawnPointIndex = random.Next(0, this.sheepSpawnPoints.Count);
+		sheep.name          = "Sheep";
+		sheepTransform.SetParent(this.transform, true);
+		sheepTransform.localPosition = sheepSpawnPoints[spawnPointIndex] + new Vector2(-0.625f, 0.825f);
+		return true;
+	}
 }
