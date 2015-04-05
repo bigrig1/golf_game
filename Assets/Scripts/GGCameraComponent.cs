@@ -23,8 +23,7 @@ public class GGCameraComponent: MonoBehaviour {
 	public void Update() {
 		if (this.moveStartTime > 0.0f) {
 			var mapComponent        = GGGameSceneComponent.instance.mapComponent;
-			var relativeMapIndex    = mapComponent.currentMapIndex - mapComponent.initialMapIndex;
-			var targetY             = GGMapComponent.mapHeight * ((float)relativeMapIndex + 0.5f);
+			var targetY             = mapComponent.yOffset - GGMapComponent.screenHeight * 0.5f;
 			var duration            = Time.time - this.moveStartTime;
 			var progress            = Mathf.Clamp01(duration / GGCameraComponent.mapChangeDuration);
 			var position            = this.transform.position;
@@ -40,5 +39,5 @@ public class GGCameraComponent: MonoBehaviour {
 	
 	/* Getting configuration values. */
 	
-	public const float mapChangeDuration = 1.5f;
+	public const float mapChangeDuration = 1.85f;
 }
