@@ -51,7 +51,13 @@ public class GGBallComponent: MonoBehaviour {
 	
 	/* Getting information about the ball. */
 	
-	public bool isInHole { get; private set; }
+	// The hole object that this ball is contained in, if any.
+	public GameObject containingHole { get; private set; }
+	
+	// Whether or not the ball is inside of a hole right now.
+	public bool isInHole { get {
+		return this.containingHole != null;
+	} }
 	
 	/* Shooting the ball. */
 	
@@ -111,11 +117,11 @@ public class GGBallComponent: MonoBehaviour {
 	}
 	
 	public void OnTriggerEnter2D(Collider2D collider) {
-		this.isInHole = true;
+		this.containingHole = collider.gameObject;
 	}
 	
 	public void OnTriggerStay2D(Collider2D collider) {
-		this.isInHole = true;
+		this.containingHole = collider.gameObject;
 	}
 	
 	/* Getting audio clips. */
@@ -144,6 +150,6 @@ public class GGBallComponent: MonoBehaviour {
 			}
 		}
 		
-		this.isInHole = false;
+		this.containingHole = null;
 	}
 }

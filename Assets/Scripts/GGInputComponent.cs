@@ -20,7 +20,11 @@ public class GGInputComponent: MonoBehaviour {
 	/* Updating. */
 	
 	public void Update() {
-		if (Input.touchSupported) {
+		if (GGGameSceneComponent.instance.cameraComponent.isMovingToNextMap) {
+			this.inputOrigin  = null;
+			this.currentInput = null;
+		}
+		else if (Input.touchSupported) {
 			this.UpdateTouchInput();
 		}
 		else {
@@ -37,6 +41,7 @@ public class GGInputComponent: MonoBehaviour {
 			this.ballHasBeenHit = false;
 			
 			if (gameSceneComponent.ballComponent.isInHole) {
+				gameSceneComponent.ballComponent.containingHole.GetComponent<Collider2D>().enabled = false;
 				gameSceneComponent.mapComponent.BuildNextMap();
 				gameSceneComponent.cameraComponent.MoveToNextMap();
 			}
@@ -113,11 +118,13 @@ public class GGInputComponent: MonoBehaviour {
 		var arrow = GGGameSceneComponent.instance.arrow;
 		
 		if (this.inputOrigin.HasValue && this.currentInput.HasValue) {
-			var arrowComponent     = GGGameSceneComponent.instance.arrowComponent;
+			var gameSceneComponent = GGGameSceneComponent.instance;
+			var cameraComponent    = gameSceneComponent.cameraComponent;
+			var arrowComponent     = gameSceneComponent.arrowComponent;
 			var inputOrigin        = this.inputOrigin.Value;
 			var currentInput       = this.currentInput.Value;
 			var inputMagnitude     = currentInput - inputOrigin;
-			arrowComponent.isFaded = this.ballHasBeenHit;
+			arrowComponent.isFaded = this.ballHasBeenHit || cameraComponent.isMovingToNextMap;
 			arrowComponent.SetPosition(inputOrigin, inputOrigin - inputMagnitude);
 			arrow.SetActive(true);
 		}

@@ -8,6 +8,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GGCameraComponent: MonoBehaviour {
+	/* Getting information about the camera. */
+	
+	public bool isMovingToNextMap { get {
+		return this.moveStartTime > 0.0f;
+	} }
+	
 	/* Moving the camera. */
 	
 	public void MoveToNextMap() {
@@ -21,7 +27,7 @@ public class GGCameraComponent: MonoBehaviour {
 	private float moveStartY    = 0.0f;
 	
 	public void Update() {
-		if (this.moveStartTime > 0.0f) {
+		if (this.isMovingToNextMap) {
 			var mapComponent        = GGGameSceneComponent.instance.mapComponent;
 			var targetY             = mapComponent.yOffset - GGMapComponent.screenHeight * 0.5f;
 			var duration            = Time.time - this.moveStartTime;

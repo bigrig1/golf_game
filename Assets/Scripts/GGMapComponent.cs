@@ -141,7 +141,7 @@ public class GGMapComponent: MonoBehaviour {
 	// having the player hit them when they hit the ball above the screen.
 	private void BuildMap(int mapIndex, bool isNextMap) {
 		var random = new System.Random(168403912 + mapIndex + 5);
-		this.AddWalls(isNextMap, random);
+		this.AddWalls(mapIndex, isNextMap, random);
 		this.AddPlatforms(mapIndex, isNextMap, random);
 		this.AddSheeps(isNextMap, random);
 		this.groundComponent.gameObject.SetActive(mapIndex <= 2);
@@ -154,11 +154,27 @@ public class GGMapComponent: MonoBehaviour {
 	}
 	
 	// Adds all of the walls for the map.
-	private void AddWalls(bool isNextMap, System.Random random) {
+	private void AddWalls(int mapIndex, bool isNextMap, System.Random random) {
 		var wallArrangements = GGMapComponent.wallArrangements;
 		var leftArrangement  = wallArrangements[random.Next(wallArrangements.Length)];
 		var rightArrangement = wallArrangements[random.Next(wallArrangements.Length)];
 		var wallY            = 0.0f;
+		
+		// This generates the extra section's worth of wall at the bottom of the map at the ground
+		// level. We intentionally don't use the yOffset here because the yOffset for the first
+		// level isn't actually at ground level. Not sure if this is actually a good way of doing
+		// this or not -- will need to make sure everything works right when we start loading saved
+		// games at arbitrary maps.
+		if (mapIndex == 0) {
+			wallY += this.AddWall(wallY, GGWallSizeClass.Small,  true, false, random);
+			wallY += this.AddWall(wallY, GGWallSizeClass.Medium, true, false, random);
+			wallY += this.AddWall(wallY, GGWallSizeClass.Small,  true, false, random);
+			wallY  = 0.0f;
+			wallY += this.AddWall(wallY, GGWallSizeClass.Medium, false, false, random);
+			wallY += this.AddWall(wallY, GGWallSizeClass.Small,  false, false, random);
+			wallY += this.AddWall(wallY, GGWallSizeClass.Small,  false, false, random);
+			wallY  = 0.0f;
+		}
 		
 		for (var i = 0; i < leftArrangement.Length; i += 1) {
 			var sizeClass             = leftArrangement[i];
@@ -629,13 +645,11 @@ public class GGMapComponent: MonoBehaviour {
 	// when the map is generated, so there's no need to have multiple entries with the same
 	// combination of size classes.
 	public static GGWallSizeClass[][] wallArrangements = new [] {
-		new [] { GGWallSizeClass.Large, GGWallSizeClass.Large, GGWallSizeClass.Large },
-		new [] { GGWallSizeClass.Large, GGWallSizeClass.Large, GGWallSizeClass.Medium, GGWallSizeClass.Medium },
-		new [] { GGWallSizeClass.Large, GGWallSizeClass.Large, GGWallSizeClass.Medium, GGWallSizeClass.Small, GGWallSizeClass.Small },
-		new [] { GGWallSizeClass.Large, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium },
-		new [] { GGWallSizeClass.Large, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Small, GGWallSizeClass.Small },
-		new [] { GGWallSizeClass.Large, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Small, GGWallSizeClass.Small, GGWallSizeClass.Small, GGWallSizeClass.Small },
-		new [] { GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Small, GGWallSizeClass.Small, GGWallSizeClass.Small, GGWallSizeClass.Small },
-		new [] { GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Small, GGWallSizeClass.Small }
+		new [] { GGWallSizeClass.Large, GGWallSizeClass.Large, GGWallSizeClass.Small },
+		new [] { GGWallSizeClass.Large, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Small },
+		new [] { GGWallSizeClass.Large, GGWallSizeClass.Medium, GGWallSizeClass.Small, GGWallSizeClass.Small, GGWallSizeClass.Small },
+		new [] { GGWallSizeClass.Large, GGWallSizeClass.Small, GGWallSizeClass.Small, GGWallSizeClass.Small, GGWallSizeClass.Small, GGWallSizeClass.Small },
+		new [] { GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Small, GGWallSizeClass.Small, GGWallSizeClass.Small, GGWallSizeClass.Small, GGWallSizeClass.Small },
+		new [] { GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Medium, GGWallSizeClass.Small, GGWallSizeClass.Small, GGWallSizeClass.Small },
 	};
 }
