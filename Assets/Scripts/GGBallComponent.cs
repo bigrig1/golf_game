@@ -65,6 +65,7 @@ public class GGBallComponent: MonoBehaviour {
 		var magnitude                         = force.magnitude;
 		this.durationUnderForceSleepThreshold = 0.0f;
 		this.rigidbody2D.isKinematic          = false;
+		this.savedPosition                    = this.transform.position;
 		this.shotAudioSource.pitch            = 1.0f + Random.Range(-this.shotPitchVariation, this.shotPitchVariation);
 		
 		if (magnitude >= this.bigShotForce) {
@@ -80,6 +81,19 @@ public class GGBallComponent: MonoBehaviour {
 		this.shotAudioSource.Play();
 		this.shouldCancelNextCollisionAudioEvent = true;
 		this.rigidbody2D.AddForce(force, ForceMode2D.Impulse);
+	}
+	
+	/* Resetting the ball's position. */
+	
+	// The world-space position that the ball should be reverted to if ResetPosition is called. This
+	// should be set before hitting the ball in case it goes off screen.
+	public Vector3 savedPosition;
+	
+	public void ResetPosition() {
+		var position              = this.savedPosition;
+		position.y               += 0.275f;
+		this.transform.position   = position;
+		this.rigidbody2D.velocity = new Vector2();
 	}
 	
 	/* Responding to events. */
@@ -135,8 +149,11 @@ public class GGBallComponent: MonoBehaviour {
 	/* Updating. */
 	
 	private float durationUnderForceSleepThreshold = 0.0f;
+	private float durationOffScreen                = 0.0f;
 	
 	public void FixedUpdate() {
+		var screenPosition = Camera.main.WorldToViewportPoint(this.transform.position);
+		
 		if (!this.rigidbody2D.isKinematic) {
 			if (this.rigidbody2D.velocity.magnitude < 0.15f) {
 				this.durationUnderForceSleepThreshold += Time.deltaTime;
@@ -147,6 +164,33 @@ public class GGBallComponent: MonoBehaviour {
 			}
 			else {
 				this.durationUnderForceSleepThreshold = 0.0f;
+			}
+			
+			if (screenPosition.y < 0.0f) {
+				this.durationOffScreen += Time.deltaTime;
+				
+				if (durationOffScreen > 1.0f) {
+					this.ResetPosition();
+					this.durationOffScreen = 0.0f;
+				}
+			}
+			else {
+				this.durationOffScreen = 0.0f;
+			}
+		}
+		else {
+			var isOffScreenHorizontally = (
+				screenPosition.x < -GGMapComponent.mapWidth / 2.0f ||
+				screenPosition.x >  GGMapComponent.mapWidth / 2.0f
+			);
+			
+			var isOffScreenVertically = (
+				screenPosition.y < 0.0f ||
+				screenPosition.y > GGMapComponent.screenHeight
+			);
+			
+			if (isOffScreenHorizontally || isOffScreenVertically) {
+				this.ResetPosition();
 			}
 		}
 		
