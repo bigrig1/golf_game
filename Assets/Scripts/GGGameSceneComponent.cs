@@ -89,4 +89,10 @@ public class GGGameSceneComponent: MonoBehaviour {
 	
 	// The number of sheep the player has collected.
 	public int sheepCount = 0;
+	
+	/* Accessing the game mode. */
+	
+	// The current game mode. This is static because we want to be able to set it from the main menu
+	// scene and have it persist when we load the game scene.
+	public static GGGameMode mode = GGGameMode.Zen;
 }

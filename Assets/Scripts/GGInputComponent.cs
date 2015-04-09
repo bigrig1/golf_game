@@ -17,6 +17,9 @@ public class GGInputComponent: MonoBehaviour {
 	// the ball and back to false once it comes to a rest.
 	private bool ballHasBeenHit = false;
 	
+	// Whether or not debug input is enabled. Should disable this before doing builds.
+	private bool debugInputIsEnabled = true;
+	
 	/* Updating. */
 	
 	public void Update() {
@@ -85,7 +88,11 @@ public class GGInputComponent: MonoBehaviour {
 	}
 	
 	private void UpdateMouseInput() {
-		if (Input.GetMouseButton(0)) {
+		if (this.debugInputIsEnabled && Input.GetKey(KeyCode.LeftShift) && Input.GetMouseButtonDown(0)) {
+			var ball                = GGGameSceneComponent.instance.ball;
+			ball.transform.position = this.ConvertInputToWorldSpace(Input.mousePosition);
+		}
+		else if (Input.GetMouseButton(0)) {
 			this.currentInput = this.ConvertInputToWorldSpace(Input.mousePosition);
 			
 			if (!this.inputOrigin.HasValue) {

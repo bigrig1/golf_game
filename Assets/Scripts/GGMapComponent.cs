@@ -140,7 +140,8 @@ public class GGMapComponent: MonoBehaviour {
 	// added to the lists of objects for the next level, and the platforms will be disabled to avoid
 	// having the player hit them when they hit the ball above the screen.
 	private void BuildMap(int mapIndex, bool isNextMap) {
-		var random = new System.Random(168403912 + mapIndex + 5);
+		var seed   = GGGameSceneComponent.mode == GGGameMode.Zen ? 168403912 + mapIndex + 5 : (new System.Random()).Next();
+		var random = new System.Random(seed);
 		this.AddWalls(mapIndex, isNextMap, random);
 		this.AddPlatforms(mapIndex, isNextMap, random);
 		this.AddSheeps(isNextMap, random);
