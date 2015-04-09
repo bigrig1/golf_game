@@ -46,10 +46,20 @@ public class GGPhysicsComponent: MonoBehaviour {
 		this.rockMaterial.bounciness  = GGPhysicsComponent.rockBounciness;
 		this.UpdateCollider(mapComponent.groundCollider);
 		
+		foreach (var platformComponent in mapComponent.previousPlatformComponents) {
+			foreach (var collider in platformComponent.colliders) {
+				this.UpdateCollider(collider);
+			}
+		}
+		
 		foreach (var platformComponent in mapComponent.platformComponents) {
 			foreach (var collider in platformComponent.colliders) {
 				this.UpdateCollider(collider);
 			}
+		}
+		
+		foreach (var wallComponent in mapComponent.previousWallComponents) {
+			this.UpdateCollider(wallComponent.collider2D);
 		}
 		
 		foreach (var wallComponent in mapComponent.wallComponents) {
