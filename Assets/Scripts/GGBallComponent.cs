@@ -54,6 +54,9 @@ public class GGBallComponent: MonoBehaviour {
 	// The hole object that this ball is contained in, if any.
 	public GameObject containingHole { get; private set; }
 	
+	// The hole that the ball was most recently in, if any.
+	public GameObject mostRecentHole { get; private set; }
+	
 	// Whether or not the ball is inside of a hole right now.
 	public bool isInHole { get {
 		return this.containingHole != null;
@@ -81,6 +84,13 @@ public class GGBallComponent: MonoBehaviour {
 		this.shotAudioSource.Play();
 		this.shouldCancelNextCollisionAudioEvent = true;
 		this.rigidbody2D.AddForce(force, ForceMode2D.Impulse);
+	}
+	
+	private void BounceFromHole() {
+		this.timeToPlugHole                   = 0.4f;
+		this.durationUnderForceSleepThreshold = 0.0f;
+		this.rigidbody2D.isKinematic          = false;
+		this.rigidbody2D.AddForce(new Vector2(0.0f, 5.0f), ForceMode2D.Impulse);
 	}
 	
 	/* Resetting the ball's position. */
@@ -121,6 +131,7 @@ public class GGBallComponent: MonoBehaviour {
 					case "Sand":   this.collisionAudioSource.clip = this.GetRandomAudioClip(this.sandAudioClips);  pitchVariation += this.sandPitchVariation;  break;
 					case "Rock":   this.collisionAudioSource.clip = this.GetRandomAudioClip(this.rockAudioClips);  pitchVariation += this.rockPitchVariation;  break;
 					case "Sheep":  this.collisionAudioSource.clip = this.GetRandomAudioClip(this.sheepAudioClips); pitchVariation += this.sheepPitchVariation; break;
+					case "Plug":   this.collisionAudioSource.clip = this.GetRandomAudioClip(this.rockAudioClips);  pitchVariation += this.rockPitchVariation;  break;
 					default:       Debug.LogError("Audio event encountered unhandled collider name " + colliderName + "."); break;
 				}
 				
@@ -132,10 +143,16 @@ public class GGBallComponent: MonoBehaviour {
 	
 	public void OnTriggerEnter2D(Collider2D collider) {
 		this.containingHole = collider.gameObject;
+		this.mostRecentHole = this.containingHole;
 	}
 	
 	public void OnTriggerStay2D(Collider2D collider) {
 		this.containingHole = collider.gameObject;
+		this.mostRecentHole = this.containingHole;
+	}
+	
+	public void DidFinishTransitioningToMap() {
+		this.BounceFromHole();
 	}
 	
 	/* Getting audio clips. */
@@ -150,6 +167,7 @@ public class GGBallComponent: MonoBehaviour {
 	
 	private float durationUnderForceSleepThreshold = 0.0f;
 	private float durationOffScreen                = 0.0f;
+	private float timeToPlugHole                   = 0.0f;
 	
 	public void FixedUpdate() {
 		var screenPosition = Camera.main.WorldToViewportPoint(this.transform.position);
@@ -195,5 +213,13 @@ public class GGBallComponent: MonoBehaviour {
 		}
 		
 		this.containingHole = null;
+		
+		if (this.timeToPlugHole > 0.0f) {
+			this.timeToPlugHole = Mathf.Max(0.0f, this.timeToPlugHole - Time.deltaTime);
+			
+			if (this.timeToPlugHole == 0.0f) {
+				this.mostRecentHole.GetComponent<GGHoleComponent>().Plug();
+			}
+		}
 	}
 }

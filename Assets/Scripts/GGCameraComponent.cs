@@ -23,8 +23,9 @@ public class GGCameraComponent: MonoBehaviour {
 	
 	/* Updating. */
 	
-	private float moveStartTime = 0.0f;
-	private float moveStartY    = 0.0f;
+	private float moveStartTime         = 0.0f;
+	private float moveStartY            = 0.0f;
+	private bool didFinishTransitioning = false;
 	
 	public void Update() {
 		if (this.isMovingToNextMap) {
@@ -37,9 +38,17 @@ public class GGCameraComponent: MonoBehaviour {
 			this.transform.position = position;
 			
 			if (progress >= 1.0f) {
-				this.moveStartTime = 0.0f;
-				this.moveStartY    = 0.0f;
+				this.moveStartTime          = 0.0f;
+				this.moveStartY             = 0.0f;
+				this.didFinishTransitioning = true;
 			}
+		}
+	}
+	
+	public void FixedUpdate() {
+		if (this.didFinishTransitioning) {
+			GGGameSceneComponent.instance.BroadcastMessage("DidFinishTransitioningToMap", null, SendMessageOptions.DontRequireReceiver);
+			this.didFinishTransitioning = false;
 		}
 	}
 	

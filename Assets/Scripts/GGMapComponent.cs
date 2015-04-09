@@ -511,7 +511,7 @@ public class GGMapComponent: MonoBehaviour {
 	
 	// The amount of padding on the sides of the map, which is used for positioning platforms so
 	// that they don't overlap the walls.
-	public const float horizontalMapPadding = 2.5f;
+	public const float horizontalMapPadding = 1.0f;
 	
 	// The amount of padding at the top of the map, which prevents platforms from being placed too
 	// close to the top of the screen.
