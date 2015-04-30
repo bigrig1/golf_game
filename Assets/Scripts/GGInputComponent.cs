@@ -161,7 +161,7 @@ public class GGInputComponent: MonoBehaviour {
 	/* Getting configuration values. */
 	
 	// The minimum and maximum magnitudes of the input vector in screen space (pixels).
-	public const float minInputThreshold = 0.5f;
+	public const float minInputThreshold = 0.85f;
 	public const float maxInputThreshold = 9.0f;
 	
 	// A multiplier that gets applied to the input vector to determine the amount of force to use

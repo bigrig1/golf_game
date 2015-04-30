@@ -27,11 +27,13 @@ public class GGGameSceneComponent: MonoBehaviour {
 			var name           = child.name;
 			
 			switch (name) {
-				case "Ball":     this.ball  = child;                             break;
-				case "Arrow":    this.arrow = child;                             break;
-				case "Platform": this.mapComponent.LoadPlatformPrototype(child); break;
-				case "Wall":     this.mapComponent.LoadWallPrototype(child);     break;
-				case "Ground":   this.mapComponent.LoadGround(child);            break;
+				case "Ball":         this.ball  = child;                             break;
+				case "Arrow":        this.arrow = child;                             break;
+				case "Platform":     this.mapComponent.LoadPlatformPrototype(child); break;
+				case "Easy Walls":   this.LoadWallPrototypes(child);                 break;
+				// case "Medium Walls": this.LoadWallPrototypes(child);                 break;
+				// case "Hard Walls":   this.LoadWallPrototypes(child);                 break;
+				case "Ground":       this.mapComponent.LoadGround(child);            break;
 			}
 		}
 		
@@ -40,6 +42,19 @@ public class GGGameSceneComponent: MonoBehaviour {
 		this.ballCollider    = this.ball.GetComponent<CircleCollider2D>();
 		this.arrowComponent  = this.arrow.GetComponent<GGArrowComponent>();
 		this.cameraComponent = Camera.main.GetComponent<GGCameraComponent>();
+	}
+	
+	// TODO: Pass in easy/medium/hard.
+	private void LoadWallPrototypes(GameObject container) {
+		var transform  = container.transform;
+		var childCount = transform.childCount;
+		
+		for (var i = 0; i < childCount; i += 1) {
+			var child = transform.GetChild(i).gameObject;
+			
+			// TODO: Factor in easy/medium/hard.
+			this.mapComponent.LoadWallPrototype(child);
+		}
 	}
 	
 	/* Accessing the component. */

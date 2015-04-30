@@ -9,9 +9,11 @@ public class GGArrowComponent: MonoBehaviour {
 	/* Initializing. */
 	
 	public void Start() {
-		this.head    = this.transform.Find("Head").gameObject;
-		this.body    = this.transform.Find("Body").gameObject;
-		this.isFaded = false;
+		this.head                           = this.transform.Find("Head").gameObject;
+		this.body                           = this.transform.Find("Body").gameObject;
+		this.isFaded                        = false;
+		this.head.renderer.sortingLayerName = "Arrow";
+		this.body.renderer.sortingLayerName = "Arrow";
 		this.GenerateHeadMesh();
 		this.GenerateBodyMesh();
 	}
