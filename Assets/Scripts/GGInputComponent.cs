@@ -130,9 +130,11 @@ public class GGInputComponent: MonoBehaviour {
 			var arrowComponent     = gameSceneComponent.arrowComponent;
 			var inputOrigin        = this.inputOrigin.Value;
 			var currentInput       = this.currentInput.Value;
-			var inputMagnitude     = currentInput - inputOrigin;
+			var inputVector        = currentInput - inputOrigin;
+			var ballOrigin         = (Vector2)gameSceneComponent.ball.transform.position;
+			arrowComponent.power   = inputVector.magnitude / GGInputComponent.maxInputThreshold;
 			arrowComponent.isFaded = this.ballHasBeenHit || cameraComponent.isMovingToNextMap;
-			arrowComponent.SetPosition(inputOrigin, inputOrigin - inputMagnitude);
+			arrowComponent.SetPosition(ballOrigin, ballOrigin - inputVector);
 			arrow.SetActive(true);
 		}
 		else {

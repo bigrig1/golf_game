@@ -21,13 +21,47 @@ public class GGArrowComponent: MonoBehaviour {
 	public bool isFaded {
 		get { return _isFaded; }
 		set {
-			_isFaded                          = value;
-			this.head.renderer.material.color = _isFaded ? GGArrowComponent.fadedColor : GGArrowComponent.standardColor;
-			this.body.renderer.material.color = _isFaded ? GGArrowComponent.fadedColor : GGArrowComponent.standardColor;
+			_isFaded = value;
+			// TODO: Update color.
 		}
 	}
 	
 	private bool _isFaded = false;
+	
+	public float power {
+		get { return _power; }
+		set {
+			_power = Mathf.Clamp01(value);
+			
+			var colors = GGArrowComponent.colors;
+			
+			if (colors.Length == 1) {
+				this.SetColor(colors[0]);
+			}
+			else if (colors.Length > 0) {
+				var rangePerColor = 1.0f / (float)(colors.Length - 1);
+				var leftIndex     = (int)Mathf.Clamp(Mathf.Floor(_power / rangePerColor), 0, colors.Length - 2);
+				var leftColor     = colors[leftIndex];
+				var rightColor    = colors[leftIndex + 1];
+				var progress      = (_power - (float)leftIndex * rangePerColor) / rangePerColor;
+				
+				var color = new Color(
+					leftColor.r * (1.0f - progress) + rightColor.r * progress,
+					leftColor.g * (1.0f - progress) + rightColor.g * progress,
+					leftColor.b * (1.0f - progress) + rightColor.b * progress
+				);
+				
+				this.SetColor(color);
+			}
+		}
+	}
+	
+	private float _power = 0.0f;
+	
+	private void SetColor(Color color) {
+		this.head.renderer.material.color = color;
+		this.body.renderer.material.color = color;
+	}
 	
 	/* Generating meshes. */
 	
@@ -92,9 +126,13 @@ public class GGArrowComponent: MonoBehaviour {
 	
 	/* Getting configuration values. */
 	
-	public static Color standardColor = new Color(0.22f, 0.45f, 0.82f, 1.0f);
-	public static Color fadedColor    = new Color(0.41f, 0.65f, 0.80f, 1.0f);
-	public const  float headWidth     = 0.6f;
-	public const  float headHeight    = 0.475f;
-	public const  float bodyThickness = 0.115f;
+	public static Color[] colors = new [] {
+		new Color(234.0f / 255.0f, 217.0f / 255.0f, 40.0f / 255.0f, 1.0f),
+		new Color(236.0f / 255.0f, 150.0f / 255.0f, 62.0f / 255.0f, 1.0f),
+		new Color(204.0f / 255.0f, 56.0f  / 255.0f, 26.0f / 255.0f, 1.0f)
+	};
+	
+	public const float headWidth     = 0.6f;
+	public const float headHeight    = 0.475f;
+	public const float bodyThickness = 0.115f;
 }
