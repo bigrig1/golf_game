@@ -260,10 +260,6 @@ public class GGMapComponent: MonoBehaviour {
 			
 			if ((float)random.NextDouble() < ratio) {
 				difficulty = mapIndex < normalThreshold ? "normal" : "hard";
-				Debug.Log("Ratio " + ratio + " ~ Bump! " + difficulty);
-			}
-			else {
-				Debug.Log("Ratio " + ratio);
 			}
 		}
 		
