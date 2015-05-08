@@ -64,11 +64,49 @@ public class GGMapComponent: MonoBehaviour {
 	
 	// The wall components for the wall prototypes, grouped by size class.
 	[HideInInspector]
-	public List<GameObject> smallWallPrototypes = new List<GameObject>();
+	public List<GameObject> smallEasyWallPrototypes = new List<GameObject>();
 	[HideInInspector]
-	public List<GameObject> mediumWallPrototypes = new List<GameObject>();
+	public List<GameObject> smallNormalWallPrototypes = new List<GameObject>();
 	[HideInInspector]
-	public List<GameObject> largeWallPrototypes = new List<GameObject>();
+	public List<GameObject> smallHardWallPrototypes = new List<GameObject>();
+	[HideInInspector]
+	public List<GameObject> mediumEasyWallPrototypes = new List<GameObject>();
+	[HideInInspector]
+	public List<GameObject> mediumNormalWallPrototypes = new List<GameObject>();
+	[HideInInspector]
+	public List<GameObject> mediumHardWallPrototypes = new List<GameObject>();
+	[HideInInspector]
+	public List<GameObject> largeEasyWallPrototypes = new List<GameObject>();
+	[HideInInspector]
+	public List<GameObject> largeNormalWallPrototypes = new List<GameObject>();
+	[HideInInspector]
+	public List<GameObject> largeHardWallPrototypes = new List<GameObject>();
+	
+	private List<GameObject> WallPrototypesBySizeClassAndDifficulty(GGWallSizeClass sizeClass, string difficulty) {
+		switch (sizeClass) {
+			case GGWallSizeClass.Small: switch (difficulty) {
+				case "easy":   return this.smallEasyWallPrototypes;
+				case "normal": return this.smallNormalWallPrototypes;
+				case "hard":   return this.smallHardWallPrototypes;
+			} break;
+			
+			case GGWallSizeClass.Medium: switch (difficulty) {
+				case "easy":   return this.mediumEasyWallPrototypes;
+				case "normal": return this.mediumNormalWallPrototypes;
+				case "hard":   return this.mediumHardWallPrototypes;
+			} break;
+			
+			case GGWallSizeClass.Large: switch (difficulty) {
+				case "easy":   return this.largeEasyWallPrototypes;
+				case "normal": return this.largeNormalWallPrototypes;
+				case "hard":   return this.largeHardWallPrototypes;
+			} break;
+			
+			default: Debug.LogError("Unhandled wall size class."); break;
+		}
+		
+		return null;
+	}
 	
 	/* Building maps. */
 	
@@ -167,13 +205,13 @@ public class GGMapComponent: MonoBehaviour {
 		// this or not -- will need to make sure everything works right when we start loading saved
 		// games at arbitrary maps.
 		if (mapIndex == 0) {
-			wallY += this.AddWall(wallY, GGWallSizeClass.Small,  true, false, random);
-			wallY += this.AddWall(wallY, GGWallSizeClass.Medium, true, false, random);
-			wallY += this.AddWall(wallY, GGWallSizeClass.Small,  true, false, random);
+			wallY += this.AddWall(wallY, GGWallSizeClass.Small,  true, 0, false, random);
+			wallY += this.AddWall(wallY, GGWallSizeClass.Medium, true, 0, false, random);
+			wallY += this.AddWall(wallY, GGWallSizeClass.Small,  true, 0, false, random);
 			wallY  = 0.0f;
-			wallY += this.AddWall(wallY, GGWallSizeClass.Medium, false, false, random);
-			wallY += this.AddWall(wallY, GGWallSizeClass.Small,  false, false, random);
-			wallY += this.AddWall(wallY, GGWallSizeClass.Small,  false, false, random);
+			wallY += this.AddWall(wallY, GGWallSizeClass.Medium, false, 0, false, random);
+			wallY += this.AddWall(wallY, GGWallSizeClass.Small,  false, 0, false, random);
+			wallY += this.AddWall(wallY, GGWallSizeClass.Small,  false, 0, false, random);
 			wallY  = 0.0f;
 		}
 		
@@ -192,34 +230,44 @@ public class GGMapComponent: MonoBehaviour {
 		}
 		
 		foreach (var sizeClass in leftArrangement) {
-			wallY += this.AddWall(wallY + this.yOffset, sizeClass, true, isNextMap, random);
+			wallY += this.AddWall(wallY + this.yOffset, sizeClass, true, mapIndex, isNextMap, random);
 		}
 		
 		wallY = 0.0f;
 		
 		foreach (var sizeClass in rightArrangement) {
-			wallY += this.AddWall(wallY + this.yOffset, sizeClass, false, isNextMap, random);
+			wallY += this.AddWall(wallY + this.yOffset, sizeClass, false, mapIndex, isNextMap, random);
 		}
 	}
 	
 	// Adds a wall segment at the given Y position and returns the height of the segment that was
 	// added.
-	private float AddWall(float y, GGWallSizeClass sizeClass, bool isOnLeftSide, bool isNextMap, System.Random random) {
+	private float AddWall(float y, GGWallSizeClass sizeClass, bool isOnLeftSide, int mapIndex, bool isNextMap, System.Random random) {
 		var x = GGMapComponent.mapWidth / 2.0f;
 		
 		if (isOnLeftSide) {
 			x = -x;
 		}
 		
-		List<GameObject> wallPrototypes = null;
+		var normalThreshold = GGMapComponent.normalWallMapThreshold;
+		var hardThreshold   = GGMapComponent.hardWallMapThreshold;
+		var difficulty      = mapIndex >= hardThreshold ? "hard" : mapIndex >= normalThreshold ? "normal" : "easy";
 		
-		switch (sizeClass) {
-			case GGWallSizeClass.Small:  wallPrototypes = this.smallWallPrototypes;        break;
-			case GGWallSizeClass.Medium: wallPrototypes = this.mediumWallPrototypes;       break;
-			case GGWallSizeClass.Large:  wallPrototypes = this.largeWallPrototypes;        break;
-			default:                     Debug.LogError("Unhandled platform size class."); break;
+		if (mapIndex < hardThreshold) {
+			var previousThreshold = mapIndex < normalThreshold ? 0               : normalThreshold;
+			var nextThreshold     = mapIndex < normalThreshold ? normalThreshold : hardThreshold;
+			var ratio             = Mathf.Clamp01((float)(mapIndex - previousThreshold) / (float)(nextThreshold - previousThreshold));
+			
+			if ((float)random.NextDouble() < ratio) {
+				difficulty = mapIndex < normalThreshold ? "normal" : "hard";
+				Debug.Log("Ratio " + ratio + " ~ Bump! " + difficulty);
+			}
+			else {
+				Debug.Log("Ratio " + ratio);
+			}
 		}
 		
+		var wallPrototypes           = this.WallPrototypesBySizeClassAndDifficulty(sizeClass, difficulty);
 		var wallIndex                = random.Next(wallPrototypes.Count);
 		var wall                     = GameObject.Instantiate(wallPrototypes[wallIndex]) as GameObject;
 		var wallComponent            = wall.GetComponent<GGWallComponent>();
@@ -464,16 +512,9 @@ public class GGMapComponent: MonoBehaviour {
 		platform.SetActive(false);
 	}
 	
-	public void LoadWallPrototype(GameObject wall) {
+	public void LoadWallPrototype(GameObject wall, string difficulty) {
 		var wallComponent = wall.GetComponent<GGWallComponent>();
-		
-		switch (wallComponent.sizeClass) {
-			case GGWallSizeClass.Small:  this.smallWallPrototypes.Add(wall);           break;
-			case GGWallSizeClass.Medium: this.mediumWallPrototypes.Add(wall);          break;
-			case GGWallSizeClass.Large:  this.largeWallPrototypes.Add(wall);           break;
-			default:                     Debug.LogError("Unhandled wall size class."); break;
-		}
-		
+		this.WallPrototypesBySizeClassAndDifficulty(wallComponent.sizeClass, difficulty).Add(wall);
 		wall.SetActive(false);
 	}
 	
@@ -526,6 +567,13 @@ public class GGMapComponent: MonoBehaviour {
 	
 	// The minimum amount of horizontal space required between platforms in the same section.
 	public const float minHorizontalPlatformSpacing = 0.5f;
+	
+	// The thresholds used for selecting wall difficulty based on map index. As the map index
+	// increases from 0 to normalWallMapThreshold, it becomes more and more likely that normal walls
+	// will be chosen over easy walls. Similarly, as the index increases from the normal to the hard
+	// threshold, hard walls will show up more frequently than normal ones.
+	public const int normalWallMapThreshold = 30;
+	public const int hardWallMapThreshold   = 100;
 	
 	// The arrangements of platform size classes that are allowed to be used in a single section
 	// starting at map 0.
