@@ -16,7 +16,7 @@ public class GGSheepComponent: MonoBehaviour {
 	/* Configuring the sheep. */
 	
 	// Whether or not this is a hanging sheep.
-	public bool isHangingSheep = false;
+	public bool isHanging = false;
 	
 	/* Getting components. */
 	
@@ -63,7 +63,7 @@ public class GGSheepComponent: MonoBehaviour {
 		}
 		
 		var animator = this.GetComponent<Animator>();
-		animator.SetBool("Is Hanging",     this.isHangingSheep);
+		animator.SetBool("Is Hanging",     this.isHanging);
 		animator.SetBool("Is Falling",     this.isFalling);
 		animator.SetBool("Is Parachuting", this.isParachuting);
 		

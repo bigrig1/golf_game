@@ -92,6 +92,39 @@ public class GGPlatformComponent: MonoBehaviour {
 	
 	private Vector2 _size;
 	
+	// The lowest X-point of the platform in its own local space.
+	public float lowestLocalX { get {
+		if (_lowestLocalX == float.MaxValue) {
+			this.CalculateSize();
+		}
+		
+		return _lowestLocalX;
+	} }
+	
+	private float _lowestLocalX = float.MaxValue;
+	
+	// The lowest Y-point of the platform in its own local space.
+	public float highestLocalX { get {
+		if (_highestLocalX == float.MinValue) {
+			this.CalculateSize();
+		}
+		
+		return _highestLocalX;
+	} }
+	
+	private float _highestLocalX = float.MinValue;
+	
+	// The lowest Y-point of the platform in its own local space.
+	public float lowestLocalY { get {
+		if (_lowestLocalY == float.MaxValue) {
+			this.CalculateSize();
+		}
+		
+		return _lowestLocalY;
+	} }
+	
+	private float _lowestLocalY = float.MaxValue;
+	
 	// The highest Y-point of the platform in its own local space.
 	public float highestLocalY { get {
 		if (_highestLocalY == float.MinValue) {
@@ -102,6 +135,21 @@ public class GGPlatformComponent: MonoBehaviour {
 	} }
 	
 	private float _highestLocalY = float.MinValue;
+	
+	// The lowest X-point of the platform in world space.
+	public float lowestX { get {
+		return this.transform.position.x + this.lowestLocalX;
+	} }
+	
+	// The highest X-point of the platform in world space.
+	public float highestX { get {
+		return this.transform.position.x + this.highestLocalX;
+	} }
+	
+	// The lowest Y-point of the platform in world space.
+	public float lowestY { get {
+		return this.transform.position.y + this.lowestLocalY;
+	} }
 	
 	// The highest Y-point of the platform in world space.
 	public float highestY { get {
@@ -124,6 +172,33 @@ public class GGPlatformComponent: MonoBehaviour {
 		}
 		
 		_size          = new Vector2(maxX - minX, maxY - minY);
+		_lowestLocalX  = minX;
+		_highestLocalX = maxX;
+		_lowestLocalY  = minY;
 		_highestLocalY = maxY;
+	}
+	
+	/* Spawning sheep. */
+	
+	// Spawns a sheep hanging underneath the platform.
+	public void SpawnSheep(System.Random random) {
+		var sheepOffset          = new Vector2(-0.625f, -1.5f);
+		var sheep                = GameObject.Instantiate(Resources.Load("Prefabs/Sheep")) as GameObject;
+		var sheepComponent       = sheep.GetComponent<GGSheepComponent>();
+		var sheepTransform       = sheep.transform;
+		var normalizedX          = 0.2f + 0.6f * (float)random.NextDouble();
+		var localX               = this.lowestLocalX + this.size.x * normalizedX;
+		sheep.name               = "Sheep";
+		sheepComponent.isHanging = true;
+		sheepTransform.SetParent(this.transform, false);
+		
+		var raycastHit = Physics2D.Raycast(
+			new Vector2(this.transform.position.x + localX, this.lowestY - 0.05f),
+			new Vector2(0.0f, 1.0f)
+		);
+		
+		if (raycastHit) {
+			sheepTransform.localPosition = new Vector2(localX, raycastHit.point.y - this.transform.position.y) + sheepOffset;
+		}
 	}
 }
