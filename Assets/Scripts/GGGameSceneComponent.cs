@@ -10,6 +10,9 @@ public class GGGameSceneComponent: MonoBehaviour {
 	/* Initializing. */
 	
 	public void Start() {
+		// Uncomment to reset progress.
+		// PlayerPrefs.DeleteAll();
+		
 		this.mapComponent     = this.GetComponent<GGMapComponent>();
 		this.physicsComponent = this.GetComponent<GGPhysicsComponent>();
 		this.LoadGameObjects();

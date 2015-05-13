@@ -46,6 +46,11 @@ public class GGMapComponent: MonoBehaviour {
 	[HideInInspector]
 	public List<GGWallComponent> nextWallComponents = new List<GGWallComponent>();
 	
+	// Game objects from the previous map get stored here to be destroyed after the transition to
+	// the next map is complete.
+	[HideInInspector]
+	public List<GameObject> gameObjectsToCleanUp = new List<GameObject>();
+	
 	/* Managing map component prototypes. */
 	
 	// The platform components for the platform prototypes, grouped by size class and hole presence.
@@ -114,6 +119,12 @@ public class GGMapComponent: MonoBehaviour {
 		return GGMapComponent.mapHeight * (float)(this.currentMapIndex - this.initialMapIndex);
 	} }
 	
+	/* Responding to events. */
+	
+	public void DidFinishTransitioningToMap() {
+		this.CleanUp();
+	}
+	
 	/* Building maps. */
 	
 	public int initialMapIndex { get; private set; }
@@ -145,6 +156,7 @@ public class GGMapComponent: MonoBehaviour {
 			
 			this.wallComponents.Clear();
 			this.platformComponents.Clear();
+			this.groundComponent.gameObject.SetActive(false);
 		}
 		
 		this.yOffset = GGMapComponent.sectionHeight;
@@ -157,7 +169,16 @@ public class GGMapComponent: MonoBehaviour {
 	
 	// Builds the next map.
 	public void BuildNextMap() {
-		this.DestroyPreviousMap();
+		foreach (var wallComponent in this.previousWallComponents) {
+			this.gameObjectsToCleanUp.Add(wallComponent.gameObject);
+		}
+		
+		foreach (var platformComponent in this.previousPlatformComponents) {
+			this.gameObjectsToCleanUp.Add(platformComponent.gameObject);
+		}
+		
+		this.previousWallComponents.Clear();
+		this.previousPlatformComponents.Clear();
 		
 		foreach (var wallComponent in this.wallComponents) {
 			this.previousWallComponents.Add(wallComponent);
@@ -189,17 +210,12 @@ public class GGMapComponent: MonoBehaviour {
 	
 	// Destroys everything in the previous map. This should be called after the transition to the
 	// next map finishes to clean up unneeded objects.
-	public void DestroyPreviousMap() {
-		foreach (var wallComponent in this.previousWallComponents) {
-			GameObject.Destroy(wallComponent.gameObject);
+	public void CleanUp() {
+		foreach (var gameObject in this.gameObjectsToCleanUp) {
+			GameObject.Destroy(gameObject);
 		}
 		
-		foreach (var platformComponent in this.previousPlatformComponents) {
-			GameObject.Destroy(platformComponent.gameObject);
-		}
-		
-		this.previousWallComponents.Clear();
-		this.previousPlatformComponents.Clear();
+		this.gameObjectsToCleanUp.Clear();
 	}
 	
 	// Procedurally generates a map by creating all the platforms and walls for it. You'll always
@@ -212,7 +228,10 @@ public class GGMapComponent: MonoBehaviour {
 		this.AddWalls(mapIndex, isNextMap, random);
 		this.AddPlatforms(mapIndex, isNextMap, random);
 		this.AddSheeps(isNextMap, random);
-		this.groundComponent.gameObject.SetActive(mapIndex <= 2);
+		
+		if (mapIndex > 2) {
+			this.groundComponent.gameObject.SetActive(false);
+		}
 		
 		if (isNextMap) {
 			foreach (var platformComponent in this.nextPlatformComponents) {
