@@ -108,6 +108,12 @@ public class GGMapComponent: MonoBehaviour {
 		return null;
 	}
 	
+	/* Getting info about the map. */
+	
+	public float yBottom { get {
+		return GGMapComponent.mapHeight * (float)(this.currentMapIndex - this.initialMapIndex);
+	} }
+	
 	/* Building maps. */
 	
 	public int initialMapIndex { get; private set; }
@@ -120,10 +126,33 @@ public class GGMapComponent: MonoBehaviour {
 	public void BuildFirstMap(int initialMapIndex) {
 		this.initialMapIndex = initialMapIndex;
 		this.currentMapIndex = initialMapIndex;
-		this.yOffset         = GGMapComponent.sectionHeight;
+		
+		if (initialMapIndex > 0) {
+			this.yOffset = GGMapComponent.sectionHeight - GGMapComponent.mapHeight;
+			this.BuildMap(this.currentMapIndex - 1, false);
+			
+			foreach (var wallComponent in this.wallComponents) {
+				this.previousWallComponents.Add(wallComponent);
+			}
+			
+			foreach (var platformComponent in this.platformComponents) {
+				this.previousPlatformComponents.Add(platformComponent);
+				
+				if (platformComponent.hole != null) {
+					platformComponent.hole.GetComponent<GGHoleComponent>().Plug();
+				}
+			}
+			
+			this.wallComponents.Clear();
+			this.platformComponents.Clear();
+		}
+		
+		this.yOffset = GGMapComponent.sectionHeight;
 		this.BuildMap(this.currentMapIndex, false);
 		this.yOffset += GGMapComponent.mapHeight;
 		this.BuildMap(this.currentMapIndex + 1, true);
+		GGGameSceneComponent.instance.ballComponent.PersistPosition();
+		PlayerPrefs.SetInt("Current Map Index", this.currentMapIndex);
 	}
 	
 	// Builds the next map.

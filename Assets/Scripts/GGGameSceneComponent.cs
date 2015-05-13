@@ -13,8 +13,8 @@ public class GGGameSceneComponent: MonoBehaviour {
 		this.mapComponent     = this.GetComponent<GGMapComponent>();
 		this.physicsComponent = this.GetComponent<GGPhysicsComponent>();
 		this.LoadGameObjects();
-		// TODO: Load initial map index.
-		this.mapComponent.BuildFirstMap(0);
+		this.ballComponent.LoadPersistedPosition();
+		this.mapComponent.BuildFirstMap(PlayerPrefs.GetInt("Current Map Index", 0));
 	}
 	
 	private void LoadGameObjects() {

@@ -47,6 +47,8 @@ public class GGInputComponent: MonoBehaviour {
 				gameSceneComponent.ballComponent.containingHole.GetComponent<Collider2D>().enabled = false;
 				gameSceneComponent.mapComponent.BuildNextMap();
 				gameSceneComponent.cameraComponent.MoveToNextMap();
+				gameSceneComponent.ballComponent.PersistPosition();
+				PlayerPrefs.SetInt("Current Map Index", gameSceneComponent.mapComponent.currentMapIndex);
 			}
 		}
 	}

@@ -68,7 +68,7 @@ public class GGBallComponent: MonoBehaviour {
 		var magnitude                         = force.magnitude;
 		this.durationUnderForceSleepThreshold = 0.0f;
 		this.rigidbody2D.isKinematic          = false;
-		this.savedPosition                    = this.transform.position;
+		this.undoPosition                     = this.transform.position;
 		this.shotAudioSource.pitch            = 1.0f + Random.Range(-this.shotPitchVariation, this.shotPitchVariation);
 		
 		if (magnitude >= this.bigShotForce) {
@@ -93,17 +93,42 @@ public class GGBallComponent: MonoBehaviour {
 		this.rigidbody2D.AddForce(new Vector2(0.0f, 5.0f), ForceMode2D.Impulse);
 	}
 	
-	/* Resetting the ball's position. */
+	/* Undoing the ball's position. */
 	
-	// The world-space position that the ball should be reverted to if ResetPosition is called. This
-	// should be set before hitting the ball in case it goes off screen.
-	public Vector3 savedPosition;
+	// The world-space position that the ball should be reverted to if RestoreUndoPosition is
+	// called. This should be set before hitting the ball in case it goes off screen.
+	public Vector3 undoPosition;
 	
-	public void ResetPosition() {
-		var position              = this.savedPosition;
+	public void RestoreUndoPosition() {
+		var position              = this.undoPosition;
 		position.y               += 0.275f;
 		this.transform.position   = position;
 		this.rigidbody2D.velocity = new Vector2();
+ 	}
+	
+	/* Persisting the ball's position. */
+	
+	// Saves the ball's current position in PlayerPrefs. Can later call LoadPersistedPosition to
+	// restore the position.
+	public void PersistPosition() {
+		var yOffset = -GGGameSceneComponent.instance.mapComponent.yBottom;
+		
+		if (this.isInHole) {
+			yOffset += 0.6f;
+		}
+		
+		PlayerPrefs.SetFloat("Ball X", this.transform.position.x);
+		PlayerPrefs.SetFloat("Ball Y", this.transform.position.y + yOffset);
+	}
+	
+	// Resets the ball's position to the previously-saved position, if any.
+	public void LoadPersistedPosition() {
+		if (PlayerPrefs.HasKey("Ball X") && PlayerPrefs.HasKey("Ball Y")) {
+			var position            = this.transform.position;
+			position.x              = PlayerPrefs.GetFloat("Ball X");
+			position.y              = PlayerPrefs.GetFloat("Ball Y") + GGGameSceneComponent.instance.mapComponent.yBottom;
+			this.transform.position = position;
+		}
 	}
 	
 	/* Responding to events. */
@@ -178,6 +203,7 @@ public class GGBallComponent: MonoBehaviour {
 				
 				if (this.durationUnderForceSleepThreshold > 0.4f) {
 					this.rigidbody2D.isKinematic = true;
+					this.PersistPosition();
 				}
 			}
 			else {
@@ -188,7 +214,7 @@ public class GGBallComponent: MonoBehaviour {
 				this.durationOffScreen += Time.deltaTime;
 				
 				if (durationOffScreen > 1.0f) {
-					this.ResetPosition();
+					this.RestoreUndoPosition();
 					this.durationOffScreen = 0.0f;
 				}
 			}
@@ -208,7 +234,7 @@ public class GGBallComponent: MonoBehaviour {
 			);
 			
 			if (isOffScreenHorizontally || isOffScreenVertically) {
-				this.ResetPosition();
+				this.RestoreUndoPosition();
 			}
 		}
 		

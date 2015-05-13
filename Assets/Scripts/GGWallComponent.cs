@@ -65,7 +65,6 @@ public class GGWallComponent: MonoBehaviour {
 				
 				if (childTransform.gameObject.name == "Sheep Spawn") {
 					this.sheepSpawnPoints.Add(childTransform.localPosition);
-					// childTransform.gameObject.SetActive(false);
 					GameObject.Destroy(childTransform.gameObject);
 				}
 			}
