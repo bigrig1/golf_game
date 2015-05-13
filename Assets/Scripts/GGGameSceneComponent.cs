@@ -15,6 +15,7 @@ public class GGGameSceneComponent: MonoBehaviour {
 		
 		this.mapComponent     = this.GetComponent<GGMapComponent>();
 		this.physicsComponent = this.GetComponent<GGPhysicsComponent>();
+		this.sheepCount       = PlayerPrefs.GetInt("Sheep Count", 0);
 		this.LoadGameObjects();
 		this.ballComponent.LoadPersistedPosition();
 		this.mapComponent.BuildFirstMap(PlayerPrefs.GetInt("Current Map Index", 0));
@@ -103,7 +104,15 @@ public class GGGameSceneComponent: MonoBehaviour {
 	/* Accessing game state. */
 	
 	// The number of sheep the player has collected.
-	public int sheepCount = 0;
+	public int sheepCount {
+		get { return _sheepCount; }
+		set {
+			_sheepCount = value;
+			PlayerPrefs.SetInt("Sheep Count", value);
+		}
+	}
+	
+	private int _sheepCount = 0;
 	
 	/* Accessing the game mode. */
 	
