@@ -73,10 +73,10 @@ public class GGWallComponent: MonoBehaviour {
 	
 	/* Spawning sheep. */
 	
-	// Spawns a sheep if possible. Returns whether a sheep was spawned or not.
-	public bool SpawnSheep(System.Random random) {
+	// Spawns a sheep if possible. Returns the sheep component if it was created.
+	public GGSheepComponent SpawnSheep(System.Random random) {
 		if (this.sheepSpawnPoints.Count == 0) {
-			return false;
+			return null;
 		}
 		
 		var isOnRightSide = this.transform.localScale.x < 0.0f;
@@ -88,6 +88,7 @@ public class GGWallComponent: MonoBehaviour {
 		
 		var sheep           = GameObject.Instantiate(Resources.Load("Prefabs/Sheep")) as GameObject;
 		var sheepTransform  = sheep.transform;
+		var sheepComponent  = sheep.GetComponent<GGSheepComponent>();
 		var spawnPointIndex = random.Next(0, this.sheepSpawnPoints.Count);
 		sheep.name          = "Sheep";
 		sheepTransform.SetParent(this.transform, false);
@@ -99,6 +100,6 @@ public class GGWallComponent: MonoBehaviour {
 			sheepTransform.localScale = scale;
 		}
 		
-		return true;
+		return sheepComponent;
 	}
 }

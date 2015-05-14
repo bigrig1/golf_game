@@ -131,6 +131,7 @@ public class GGMapComponent: MonoBehaviour {
 	public int currentMapIndex { get; private set; }
 	public float yOffset       { get; private set; }
 	private bool shouldCreateDebugObjects = false;
+	private int mostRecentlyBuiltMapIndex = -1;
 	
 	// Builds the first map of the game. An initial map index can be passed in to start at an
 	// arbitrary map.
@@ -223,8 +224,9 @@ public class GGMapComponent: MonoBehaviour {
 	// added to the lists of objects for the next level, and the platforms will be disabled to avoid
 	// having the player hit them when they hit the ball above the screen.
 	private void BuildMap(int mapIndex, bool isNextMap) {
-		var seed   = GGGameSceneComponent.mode == GGGameMode.Zen ? 168403912 + mapIndex : (new System.Random()).Next();
-		var random = new System.Random(seed);
+		var seed                       = GGGameSceneComponent.mode == GGGameMode.Zen ? 168403912 + mapIndex : (new System.Random()).Next();
+		var random                     = new System.Random(seed);
+		this.mostRecentlyBuiltMapIndex = mapIndex;
 		this.AddWalls(mapIndex, isNextMap, random);
 		this.AddPlatforms(mapIndex, isNextMap, random);
 		this.AddSheeps(isNextMap, random);
@@ -471,45 +473,70 @@ public class GGMapComponent: MonoBehaviour {
 	
 	private void AddSheeps(bool isNextMap, System.Random random) {
 		var sheepCountChance = random.NextDouble();
+		var mapIndex         = this.mostRecentlyBuiltMapIndex;
 		
 		if (sheepCountChance > 0.95) {
 			// Two sheep.
-			this.AddWallSheep(isNextMap, random);
-			this.AddPlatformSheep(isNextMap, random);
+			this.AddWallSheep(isNextMap, mapIndex + "-0", random);
+			this.AddPlatformSheep(isNextMap, mapIndex + "-1", random);
 		}
 		else if (sheepCountChance > 0.6) {
 			// One sheep.
 			if (random.NextDouble() > 0.625) {
-				this.AddPlatformSheep(isNextMap, random);
+				this.AddPlatformSheep(isNextMap, mapIndex + "-0", random);
 			}
 			else {
-				this.AddWallSheep(isNextMap, random);
+				this.AddWallSheep(isNextMap, mapIndex + "-0", random);
 			}
 		}
 	}
 	
-	private void AddWallSheep(bool isNextMap, System.Random random) {
-		// This is a pretty janky way of doing this, but it's easy.
-		var wallComponents  = isNextMap ? this.nextWallComponents : this.wallComponents;
-		var maxAttemptCount = 12;
+	private void AddWallSheep(bool isNextMap, string id, System.Random random) {
+		// This is a pretty janky way of doing this, but it's fairly easy. We make sure to do the
+		// wall index calculation before bailing out early to ensure a consistent level generation
+		// regardless of save data.
+		var wallComponents = isNextMap ? this.nextWallComponents : this.wallComponents;
 		
-		for (var i = 0; i < maxAttemptCount; i += 1) {
-			var wallIndex     = random.Next(0, wallComponents.Count);
-			var wallComponent = wallComponents[wallIndex];
+		var attemptedWallIndexes = new [] {
+			random.Next(0, wallComponents.Count), random.Next(0, wallComponents.Count), random.Next(0, wallComponents.Count),
+			random.Next(0, wallComponents.Count), random.Next(0, wallComponents.Count), random.Next(0, wallComponents.Count),
+			random.Next(0, wallComponents.Count), random.Next(0, wallComponents.Count), random.Next(0, wallComponents.Count),
+			random.Next(0, wallComponents.Count), random.Next(0, wallComponents.Count), random.Next(0, wallComponents.Count)
+		};
+		
+		if (PlayerPrefs.HasKey("Sheep " + id)) {
+			return;
+		}
+		
+		foreach (var wallIndex in attemptedWallIndexes) {
+			var wallComponent  = wallComponents[wallIndex];
+			var sheepComponent = wallComponent.SpawnSheep(random);
 			
-			if (wallComponent.SpawnSheep(random)) {
+			if (sheepComponent != null) {
+				sheepComponent.id = id;
 				return;
 			}
 		}
 		
 		// We couldn't add a wall sheep, so let's add a platform one instead.
-		this.AddPlatformSheep(isNextMap, random);
+		this.AddPlatformSheep(isNextMap, id, random);
 	}
 	
-	private void AddPlatformSheep(bool isNextMap, System.Random random) {
+	private void AddPlatformSheep(bool isNextMap, string id, System.Random random) {
+		// We make sure to do do the index calculation before bailing out early to ensure a
+		// consistent level generation regardless of save data.
 		var platformComponents = isNextMap ? this.nextPlatformComponents : this.platformComponents;
 		var platformIndex      = random.Next(platformComponents.Count);
-		platformComponents[platformIndex].SpawnSheep(random);
+		
+		if (PlayerPrefs.HasKey("Sheep " + id)) {
+			return;
+		}
+		
+		var sheepComponent = platformComponents[platformIndex].SpawnSheep(random);
+		
+		if (sheepComponent != null) {
+			sheepComponent.id = id;
+		}
 	}
 	
 	private GGPlatformArrangement[] PlatformArrangementsForMapIndex(int index) {

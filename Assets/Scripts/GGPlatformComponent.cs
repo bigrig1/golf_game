@@ -180,8 +180,9 @@ public class GGPlatformComponent: MonoBehaviour {
 	
 	/* Spawning sheep. */
 	
-	// Spawns a sheep hanging underneath the platform.
-	public void SpawnSheep(System.Random random) {
+	// Spawns a sheep hanging underneath the platform. Returns the sheep component that was created,
+	// if any.
+	public GGSheepComponent SpawnSheep(System.Random random) {
 		var sheepOffset          = new Vector2(-0.625f, -1.5f);
 		var sheep                = GameObject.Instantiate(Resources.Load("Prefabs/Sheep")) as GameObject;
 		var sheepComponent       = sheep.GetComponent<GGSheepComponent>();
@@ -200,5 +201,7 @@ public class GGPlatformComponent: MonoBehaviour {
 		if (raycastHit) {
 			sheepTransform.localPosition = new Vector2(localX, raycastHit.point.y - this.transform.position.y) + sheepOffset;
 		}
+		
+		return sheepComponent;
 	}
 }

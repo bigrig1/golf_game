@@ -49,6 +49,10 @@ public class GGInputComponent: MonoBehaviour {
 				gameSceneComponent.cameraComponent.MoveToNextMap();
 				gameSceneComponent.ballComponent.PersistPosition();
 				PlayerPrefs.SetInt("Current Map Index", gameSceneComponent.mapComponent.currentMapIndex);
+				PlayerPrefs.DeleteKey("Sheep " + (gameSceneComponent.mapComponent.currentMapIndex - 2) + "-0");
+				PlayerPrefs.DeleteKey("Sheep " + (gameSceneComponent.mapComponent.currentMapIndex - 2) + "-1");
+				PlayerPrefs.DeleteKey("Sheep " + (gameSceneComponent.mapComponent.currentMapIndex - 2) + "-2");
+				PlayerPrefs.DeleteKey("Sheep " + (gameSceneComponent.mapComponent.currentMapIndex - 2) + "-3");
 			}
 		}
 	}

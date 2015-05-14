@@ -104,15 +104,13 @@ public class GGGameSceneComponent: MonoBehaviour {
 	/* Accessing game state. */
 	
 	// The number of sheep the player has collected.
-	public int sheepCount {
-		get { return _sheepCount; }
-		set {
-			_sheepCount = value;
-			PlayerPrefs.SetInt("Sheep Count", value);
-		}
-	}
+	public int sheepCount { get; private set; }
 	
-	private int _sheepCount = 0;
+	public void SheepWasHit(GGSheepComponent sheepComponent) {
+		this.sheepCount += 1;
+		PlayerPrefs.SetInt("Sheep Count", this.sheepCount);
+		PlayerPrefs.SetInt("Sheep " + sheepComponent.id, 1);
+	}
 	
 	/* Accessing the game mode. */
 	

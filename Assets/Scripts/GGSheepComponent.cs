@@ -18,6 +18,9 @@ public class GGSheepComponent: MonoBehaviour {
 	// Whether or not this is a hanging sheep.
 	public bool isHanging = false;
 	
+	// The sheep's ID.
+	public string id = "";
+	
 	/* Getting components. */
 	
 	new public Rigidbody2D rigidbody2D;
@@ -32,8 +35,7 @@ public class GGSheepComponent: MonoBehaviour {
 			this.fallTime                = 0.0f;
 			this.gameObject.layer        = 0;
 			this.rigidbody2D.AddForce(impulse, ForceMode2D.Impulse);
-			
-			GGGameSceneComponent.instance.sheepCount += 1;
+			GGGameSceneComponent.instance.SheepWasHit(this);
 		}
 	}
 	
