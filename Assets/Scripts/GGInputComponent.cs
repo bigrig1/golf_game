@@ -173,6 +173,12 @@ public class GGInputComponent: MonoBehaviour {
 		}
 	}
 	
+	/* Responding to buttom presses. */
+	
+	public void MenuButtonWasPressed() {
+		Application.LoadLevel("Main Menu");
+	}
+	
 	/* Helpers. */
 	
 	private Vector2 ConvertInputToWorldSpace(Vector2 input) {
