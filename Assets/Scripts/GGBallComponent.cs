@@ -105,6 +105,15 @@ public class GGBallComponent: MonoBehaviour {
 		this.transform.position   = position;
 		this.rigidbody2D.velocity = new Vector2();
  	}
+ 	
+ 	public void RestoreUndoPositionOrGameOver() {
+ 		if (GGGameSceneComponent.mode == GGGameMode.Hard) {
+ 			GGGameSceneComponent.instance.GameOverMan();
+ 		}
+ 		else {
+ 			this.RestoreUndoPosition();
+ 		}
+ 	}
 	
 	/* Persisting the ball's position. */
 	
@@ -214,7 +223,7 @@ public class GGBallComponent: MonoBehaviour {
 				this.durationOffScreen += Time.deltaTime;
 				
 				if (durationOffScreen > 1.0f) {
-					this.RestoreUndoPosition();
+					this.RestoreUndoPositionOrGameOver();
 					this.durationOffScreen = 0.0f;
 				}
 			}
@@ -234,7 +243,7 @@ public class GGBallComponent: MonoBehaviour {
 			);
 			
 			if (isOffScreenHorizontally || isOffScreenVertically) {
-				this.RestoreUndoPosition();
+				this.RestoreUndoPositionOrGameOver();
 			}
 		}
 		
