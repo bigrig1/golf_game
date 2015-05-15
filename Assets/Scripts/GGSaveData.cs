@@ -21,6 +21,7 @@ public abstract class GGSaveData {
 		PlayerPrefs.DeleteKey(GGSaveData.GetScopedKeyForMode(mode, "Sheep Count"));
 		PlayerPrefs.DeleteKey(GGSaveData.GetScopedKeyForMode(mode, "Remaining Stroke Count"));
 		PlayerPrefs.DeleteKey(GGSaveData.GetScopedKeyForMode(mode, "Current Map Index"));
+		PlayerPrefs.DeleteKey(GGSaveData.GetScopedKeyForMode(mode, "Seed"));
 	}
 	
 	public static float GetBallX() {
@@ -69,6 +70,26 @@ public abstract class GGSaveData {
 	
 	public static void DeleteSheepHitFlag(string id) {
 		PlayerPrefs.DeleteKey(GGSaveData.GetScopedKey("Sheep " + id));
+	}
+	
+	public static int GetRemainingStrokeCount(int defaultValue) {
+		return PlayerPrefs.GetInt(GGSaveData.GetScopedKey("Remaining Stroke Count"), defaultValue);
+	}
+	
+	public static void SetRemainingStrokeCount(int remainingStrokeCount) {
+		if (GGGameSceneComponent.mode != GGGameMode.Zen) {
+			PlayerPrefs.SetInt(GGSaveData.GetScopedKey("Remaining Stroke Count"), remainingStrokeCount);
+		}
+	}
+	
+	public static int GetSeed() {
+		return PlayerPrefs.GetInt(GGSaveData.GetScopedKey("Seed"), (new System.Random()).Next());
+	}
+	
+	public static void SetSeed(int seed) {
+		if (GGGameSceneComponent.mode != GGGameMode.Zen) {
+			PlayerPrefs.SetInt(GGSaveData.GetScopedKey("Seed"), seed);
+		}
 	}
 	
 	private static string GetScopedKey(string key) {

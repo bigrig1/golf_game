@@ -13,7 +13,15 @@ public class GGGameSceneComponent: MonoBehaviour {
 		// Uncomment to reset progress.
 		// PlayerPrefs.DeleteAll();
 		
-		GGSaveData.InitializeSaveData(GGGameSceneComponent.mode);
+		var mode = GGGameSceneComponent.mode;
+		
+		GGSaveData.InitializeSaveData(mode);
+		
+		if (mode != GGGameMode.Zen) {
+			this.seed                 = GGSaveData.GetSeed();
+			this.remainingStrokeCount = GGSaveData.GetRemainingStrokeCount(mode == GGGameMode.Hard ? 4 : 6);
+			GGSaveData.SetSeed(this.seed);
+		}
 		
 		this.mapComponent     = this.GetComponent<GGMapComponent>();
 		this.physicsComponent = this.GetComponent<GGPhysicsComponent>();
@@ -21,12 +29,6 @@ public class GGGameSceneComponent: MonoBehaviour {
 		this.LoadGameObjects();
 		this.ballComponent.LoadPersistedPosition();
 		this.mapComponent.BuildFirstMap(GGSaveData.GetCurrentMapIndex());
-		
-		switch (GGGameSceneComponent.mode) {
-			case GGGameMode.Zen:     this.remainingStrokeCount = 0; break;
-			case GGGameMode.Regular: this.remainingStrokeCount = 6; break;
-			case GGGameMode.Hard:    this.remainingStrokeCount = 4; break;
-		}
 	}
 	
 	private void LoadGameObjects() {
@@ -70,6 +72,7 @@ public class GGGameSceneComponent: MonoBehaviour {
 	
 	public void GameOverMan() {
 		// TODO: Do something interesting.
+		GGSaveData.DeleteSaveData(GGGameSceneComponent.mode);
 		Application.LoadLevel("Main Menu");
 	}
 	
@@ -117,6 +120,9 @@ public class GGGameSceneComponent: MonoBehaviour {
 	public GGCameraComponent cameraComponent { get; private set; }
 	
 	/* Accessing game state. */
+	
+	// The game's base seed for the RNG.
+	public int seed = 168403912;
 	
 	// The number of strokes remaining. Only relevant in normal/hard modes.
 	public int remainingStrokeCount = 0;

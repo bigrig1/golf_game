@@ -61,6 +61,8 @@ public class GGInputComponent: MonoBehaviour {
 				else if (GGGameSceneComponent.mode == GGGameMode.Hard) {
 					gameSceneComponent.remainingStrokeCount = System.Math.Max(4, remainingStrokeCount + 3);
 				}
+				
+				GGSaveData.SetRemainingStrokeCount(gameSceneComponent.remainingStrokeCount);
 			}
 			else if (GGGameSceneComponent.mode != GGGameMode.Zen && remainingStrokeCount <= 0) {
 				GGGameSceneComponent.instance.GameOverMan();
@@ -169,6 +171,7 @@ public class GGInputComponent: MonoBehaviour {
 			
 			if (GGGameSceneComponent.mode != GGGameMode.Zen) {
 				GGGameSceneComponent.instance.remainingStrokeCount -= 1;
+				GGSaveData.SetRemainingStrokeCount(GGGameSceneComponent.instance.remainingStrokeCount);
 			}
 		}
 	}
