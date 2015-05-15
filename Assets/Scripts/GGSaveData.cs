@@ -6,6 +6,23 @@ using System.Collections;
 using UnityEngine;
 
 public abstract class GGSaveData {
+	public static void InitializeSaveData(GGGameMode mode) {
+		PlayerPrefs.SetInt(GGSaveData.GetScopedKeyForMode(mode, "Data Is Present"), 1);
+	}
+	
+	public static bool HasSaveData(GGGameMode mode) {
+		return PlayerPrefs.HasKey(GGSaveData.GetScopedKeyForMode(mode, "Data Is Present"));
+	}
+	
+	public static void DeleteSaveData(GGGameMode mode) {
+		PlayerPrefs.DeleteKey(GGSaveData.GetScopedKeyForMode(mode, "Data Is Present"));
+		PlayerPrefs.DeleteKey(GGSaveData.GetScopedKeyForMode(mode, "Ball X"));
+		PlayerPrefs.DeleteKey(GGSaveData.GetScopedKeyForMode(mode, "Ball Y"));
+		PlayerPrefs.DeleteKey(GGSaveData.GetScopedKeyForMode(mode, "Sheep Count"));
+		PlayerPrefs.DeleteKey(GGSaveData.GetScopedKeyForMode(mode, "Remaining Stroke Count"));
+		PlayerPrefs.DeleteKey(GGSaveData.GetScopedKeyForMode(mode, "Current Map Index"));
+	}
+	
 	public static float GetBallX() {
 		return PlayerPrefs.GetFloat(GGSaveData.GetScopedKey("Ball X"));
 	}
@@ -55,7 +72,11 @@ public abstract class GGSaveData {
 	}
 	
 	private static string GetScopedKey(string key) {
-		return GGSaveData.GetScopeForMode(GGGameSceneComponent.mode) + " " + key;
+		return GGSaveData.GetScopedKeyForMode(GGGameSceneComponent.mode, key);
+	}
+	
+	private static string GetScopedKeyForMode(GGGameMode mode, string key) {
+		return GGSaveData.GetScopeForMode(mode) + " " + key;
 	}
 	
 	private static string GetScopeForMode(GGGameMode mode) {

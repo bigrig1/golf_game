@@ -13,6 +13,8 @@ public class GGGameSceneComponent: MonoBehaviour {
 		// Uncomment to reset progress.
 		// PlayerPrefs.DeleteAll();
 		
+		GGSaveData.InitializeSaveData(GGGameSceneComponent.mode);
+		
 		this.mapComponent     = this.GetComponent<GGMapComponent>();
 		this.physicsComponent = this.GetComponent<GGPhysicsComponent>();
 		this.sheepCount       = GGSaveData.GetSheepCount();

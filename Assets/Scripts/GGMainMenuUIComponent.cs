@@ -23,4 +23,12 @@ public class GGMainMenuUIComponent: MonoBehaviour {
 		GGGameSceneComponent.mode = GGGameMode.Hard;
 		Application.LoadLevel("Game");
 	}
+	
+	/* Updating. */
+	
+	public void FixedUpdate() {
+		// Debug.Log("ZEN: " + GGSaveData.HasSaveData(GGGameMode.Zen));
+		// Debug.Log("REGULAR: " + GGSaveData.HasSaveData(GGGameMode.Regular));
+		// Debug.Log("HARD: " + GGSaveData.HasSaveData(GGGameMode.Hard));
+	}
 }
