@@ -19,6 +19,12 @@ public class GGGameSceneComponent: MonoBehaviour {
 		this.LoadGameObjects();
 		this.ballComponent.LoadPersistedPosition();
 		this.mapComponent.BuildFirstMap(PlayerPrefs.GetInt("Current Map Index", 0));
+		
+		switch (GGGameSceneComponent.mode) {
+			case GGGameMode.Zen:     this.remainingStrokeCount = 0; break;
+			case GGGameMode.Regular: this.remainingStrokeCount = 6; break;
+			case GGGameMode.Hard:    this.remainingStrokeCount = 4; break;
+		}
 	}
 	
 	private void LoadGameObjects() {
@@ -56,6 +62,13 @@ public class GGGameSceneComponent: MonoBehaviour {
 			var child = transform.GetChild(i).gameObject;
 			this.mapComponent.LoadWallPrototype(child, difficulty);
 		}
+	}
+	
+	/* Game overing. */
+	
+	public void GameOverMan() {
+		// TODO: Do something interesting.
+		Application.LoadLevel("Main Menu");
 	}
 	
 	/* Accessing the component. */
@@ -102,6 +115,9 @@ public class GGGameSceneComponent: MonoBehaviour {
 	public GGCameraComponent cameraComponent { get; private set; }
 	
 	/* Accessing game state. */
+	
+	// The number of strokes remaining. Only relevant in normal/hard modes.
+	public int remainingStrokeCount = 0;
 	
 	// The number of sheep the player has collected.
 	public int sheepCount { get; private set; }

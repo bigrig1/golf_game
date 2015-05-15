@@ -16,8 +16,18 @@ public class GGUIComponent: MonoBehaviour {
 	public Text holeLabel;
 	public Text holeLabelShadow;
 	
+	public Image strokeCountIcon;
 	public Text strokeCountLabel;
 	public Text strokeCountLabelShadow;
+	
+	/* Initializing. */
+	
+	public void Start() {
+		var strokeCountIsEnabled = GGGameSceneComponent.mode != GGGameMode.Zen;
+		strokeCountIcon.gameObject.SetActive(strokeCountIsEnabled);
+		strokeCountLabel.gameObject.SetActive(strokeCountIsEnabled);
+		strokeCountLabelShadow.gameObject.SetActive(strokeCountIsEnabled);
+	}
 	
 	/* Updating. */
 	
@@ -25,12 +35,15 @@ public class GGUIComponent: MonoBehaviour {
 		var gameSceneComponent     = GGGameSceneComponent.instance;
 		var sheepCountString       = "" + gameSceneComponent.sheepCount;
 		var holeString             = "Hole " + (gameSceneComponent.mapComponent.currentMapIndex + 1);
-		var strokeCountString      = "0"; // TODO
 		sheepCountLabel.text       = sheepCountString;
 		sheepCountLabelShadow.text = sheepCountString;
 		holeLabel.text             = holeString;
 		holeLabelShadow.text       = holeString;
-		strokeCountLabel.text      = strokeCountString;
-		strokeCountLabel.text      = strokeCountString;
+		
+		if (GGGameSceneComponent.mode != GGGameMode.Zen) {
+			var strokeCountString       = "" + gameSceneComponent.remainingStrokeCount;
+			strokeCountLabel.text       = strokeCountString;
+			strokeCountLabelShadow.text = strokeCountString;
+		}
 	}
 }

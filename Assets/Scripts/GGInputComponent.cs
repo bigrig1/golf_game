@@ -41,7 +41,8 @@ public class GGInputComponent: MonoBehaviour {
 		var gameSceneComponent = GGGameSceneComponent.instance;
 		
 		if (this.ballHasBeenHit && gameSceneComponent.ballRigidbody2D.isKinematic) {
-			this.ballHasBeenHit = false;
+			var remainingStrokeCount = gameSceneComponent.remainingStrokeCount;
+			this.ballHasBeenHit      = false;
 			
 			if (gameSceneComponent.ballComponent.isInHole) {
 				gameSceneComponent.ballComponent.containingHole.GetComponent<Collider2D>().enabled = false;
@@ -53,6 +54,16 @@ public class GGInputComponent: MonoBehaviour {
 				PlayerPrefs.DeleteKey("Sheep " + (gameSceneComponent.mapComponent.currentMapIndex - 2) + "-1");
 				PlayerPrefs.DeleteKey("Sheep " + (gameSceneComponent.mapComponent.currentMapIndex - 2) + "-2");
 				PlayerPrefs.DeleteKey("Sheep " + (gameSceneComponent.mapComponent.currentMapIndex - 2) + "-3");
+				
+				if (GGGameSceneComponent.mode == GGGameMode.Regular) {
+					gameSceneComponent.remainingStrokeCount = System.Math.Max(6, remainingStrokeCount + 4);
+				}
+				else if (GGGameSceneComponent.mode == GGGameMode.Hard) {
+					gameSceneComponent.remainingStrokeCount = System.Math.Max(4, remainingStrokeCount + 3);
+				}
+			}
+			else if (remainingStrokeCount <= 0) {
+				GGGameSceneComponent.instance.GameOverMan();
 			}
 		}
 	}
@@ -155,6 +166,10 @@ public class GGInputComponent: MonoBehaviour {
 			var ballComponent = GGGameSceneComponent.instance.ballComponent;
 			ballComponent.Shoot((this.inputOrigin.Value - this.currentInput.Value) * GGInputComponent.inputForce);
 			this.ballHasBeenHit = true;
+			
+			if (GGGameSceneComponent.mode != GGGameMode.Zen) {
+				GGGameSceneComponent.instance.remainingStrokeCount -= 1;
+			}
 		}
 	}
 	
