@@ -7,6 +7,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GGMainMenuUIComponent: MonoBehaviour {
+	/* Initializing. */
+	
+	public void Start() {
+		this.zenResetButton.SetActive(GGSaveData.HasSaveData(GGGameMode.Zen));
+		this.regularResetButton.SetActive(GGSaveData.HasSaveData(GGGameMode.Regular));
+		this.hardResetButton.SetActive(GGSaveData.HasSaveData(GGGameMode.Hard));
+	}
+	
+	/* Accessing UI. */
+	
+	public GameObject zenResetButton;
+	public GameObject regularResetButton;
+	public GameObject hardResetButton;
+	
 	/* Responding to button presses. */
 	
 	public void ZenModeButtonWasPressed() {
@@ -24,11 +38,18 @@ public class GGMainMenuUIComponent: MonoBehaviour {
 		Application.LoadLevel("Game");
 	}
 	
-	/* Updating. */
+	public void ZenResetButtonWasPressed() {
+		GGSaveData.DeleteSaveData(GGGameMode.Zen);
+		this.zenResetButton.SetActive(false);
+	}
 	
-	public void FixedUpdate() {
-		// Debug.Log("ZEN: " + GGSaveData.HasSaveData(GGGameMode.Zen));
-		// Debug.Log("REGULAR: " + GGSaveData.HasSaveData(GGGameMode.Regular));
-		// Debug.Log("HARD: " + GGSaveData.HasSaveData(GGGameMode.Hard));
+	public void RegularResetButtonWasPressed() {
+		GGSaveData.DeleteSaveData(GGGameMode.Regular);
+		this.regularResetButton.SetActive(false);
+	}
+	
+	public void HardResetButtonWasPressed() {
+		GGSaveData.DeleteSaveData(GGGameMode.Hard);
+		this.hardResetButton.SetActive(false);
 	}
 }
