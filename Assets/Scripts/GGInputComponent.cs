@@ -49,11 +49,11 @@ public class GGInputComponent: MonoBehaviour {
 				gameSceneComponent.mapComponent.BuildNextMap();
 				gameSceneComponent.cameraComponent.MoveToNextMap();
 				gameSceneComponent.ballComponent.PersistPosition();
-				PlayerPrefs.SetInt("Current Map Index", gameSceneComponent.mapComponent.currentMapIndex);
-				PlayerPrefs.DeleteKey("Sheep " + (gameSceneComponent.mapComponent.currentMapIndex - 2) + "-0");
-				PlayerPrefs.DeleteKey("Sheep " + (gameSceneComponent.mapComponent.currentMapIndex - 2) + "-1");
-				PlayerPrefs.DeleteKey("Sheep " + (gameSceneComponent.mapComponent.currentMapIndex - 2) + "-2");
-				PlayerPrefs.DeleteKey("Sheep " + (gameSceneComponent.mapComponent.currentMapIndex - 2) + "-3");
+				GGSaveData.SetCurrentMapIndex(gameSceneComponent.mapComponent.currentMapIndex);
+				GGSaveData.DeleteSheepHitFlag((gameSceneComponent.mapComponent.currentMapIndex - 2) + "-0");
+				GGSaveData.DeleteSheepHitFlag((gameSceneComponent.mapComponent.currentMapIndex - 2) + "-1");
+				GGSaveData.DeleteSheepHitFlag((gameSceneComponent.mapComponent.currentMapIndex - 2) + "-2");
+				GGSaveData.DeleteSheepHitFlag((gameSceneComponent.mapComponent.currentMapIndex - 2) + "-3");
 				
 				if (GGGameSceneComponent.mode == GGGameMode.Regular) {
 					gameSceneComponent.remainingStrokeCount = System.Math.Max(6, remainingStrokeCount + 4);

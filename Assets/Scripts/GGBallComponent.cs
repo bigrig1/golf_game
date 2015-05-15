@@ -126,16 +126,16 @@ public class GGBallComponent: MonoBehaviour {
 			yOffset += 0.6f;
 		}
 		
-		PlayerPrefs.SetFloat("Ball X", this.transform.position.x);
-		PlayerPrefs.SetFloat("Ball Y", this.transform.position.y + yOffset);
+		GGSaveData.SetBallX(this.transform.position.x);
+		GGSaveData.SetBallY(this.transform.position.y + yOffset);
 	}
 	
 	// Resets the ball's position to the previously-saved position, if any.
 	public void LoadPersistedPosition() {
-		if (PlayerPrefs.HasKey("Ball X") && PlayerPrefs.HasKey("Ball Y")) {
+		if (GGSaveData.HasBallPosition()) {
 			var position            = this.transform.position;
-			position.x              = PlayerPrefs.GetFloat("Ball X");
-			position.y              = PlayerPrefs.GetFloat("Ball Y") + GGGameSceneComponent.instance.mapComponent.yBottom;
+			position.x              = GGSaveData.GetBallX();
+			position.y              = GGSaveData.GetBallY() + GGGameSceneComponent.instance.mapComponent.yBottom;
 			this.transform.position = position;
 		}
 	}

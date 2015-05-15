@@ -165,7 +165,7 @@ public class GGMapComponent: MonoBehaviour {
 		this.yOffset += GGMapComponent.mapHeight;
 		this.BuildMap(this.currentMapIndex + 1, true);
 		GGGameSceneComponent.instance.ballComponent.PersistPosition();
-		PlayerPrefs.SetInt("Current Map Index", this.currentMapIndex);
+		GGSaveData.SetCurrentMapIndex(this.currentMapIndex);
 	}
 	
 	// Builds the next map.
@@ -504,7 +504,7 @@ public class GGMapComponent: MonoBehaviour {
 			random.Next(0, wallComponents.Count), random.Next(0, wallComponents.Count), random.Next(0, wallComponents.Count)
 		};
 		
-		if (PlayerPrefs.HasKey("Sheep " + id)) {
+		if (GGSaveData.GetSheepHitFlag(id)) {
 			return;
 		}
 		
@@ -528,7 +528,7 @@ public class GGMapComponent: MonoBehaviour {
 		var platformComponents = isNextMap ? this.nextPlatformComponents : this.platformComponents;
 		var platformIndex      = random.Next(platformComponents.Count);
 		
-		if (PlayerPrefs.HasKey("Sheep " + id)) {
+		if (GGSaveData.GetSheepHitFlag(id)) {
 			return;
 		}
 		

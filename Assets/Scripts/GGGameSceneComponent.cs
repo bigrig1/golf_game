@@ -15,10 +15,10 @@ public class GGGameSceneComponent: MonoBehaviour {
 		
 		this.mapComponent     = this.GetComponent<GGMapComponent>();
 		this.physicsComponent = this.GetComponent<GGPhysicsComponent>();
-		this.sheepCount       = PlayerPrefs.GetInt("Sheep Count", 0);
+		this.sheepCount       = GGSaveData.GetSheepCount();
 		this.LoadGameObjects();
 		this.ballComponent.LoadPersistedPosition();
-		this.mapComponent.BuildFirstMap(PlayerPrefs.GetInt("Current Map Index", 0));
+		this.mapComponent.BuildFirstMap(GGSaveData.GetCurrentMapIndex());
 		
 		switch (GGGameSceneComponent.mode) {
 			case GGGameMode.Zen:     this.remainingStrokeCount = 0; break;
@@ -124,8 +124,8 @@ public class GGGameSceneComponent: MonoBehaviour {
 	
 	public void SheepWasHit(GGSheepComponent sheepComponent) {
 		this.sheepCount += 1;
-		PlayerPrefs.SetInt("Sheep Count", this.sheepCount);
-		PlayerPrefs.SetInt("Sheep " + sheepComponent.id, 1);
+		GGSaveData.SetSheepCount(this.sheepCount);
+		GGSaveData.SetSheepHitFlag(sheepComponent.id);
 	}
 	
 	/* Accessing the game mode. */
