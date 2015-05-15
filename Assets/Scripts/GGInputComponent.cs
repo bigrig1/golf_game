@@ -62,7 +62,7 @@ public class GGInputComponent: MonoBehaviour {
 					gameSceneComponent.remainingStrokeCount = System.Math.Max(4, remainingStrokeCount + 3);
 				}
 			}
-			else if (remainingStrokeCount <= 0) {
+			else if (GGGameSceneComponent.mode != GGGameMode.Zen && remainingStrokeCount <= 0) {
 				GGGameSceneComponent.instance.GameOverMan();
 			}
 		}
