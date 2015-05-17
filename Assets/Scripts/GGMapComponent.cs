@@ -465,7 +465,7 @@ public class GGMapComponent: MonoBehaviour {
 				var debugObject                     = GameObject.Instantiate(Resources.Load("Prefabs/Debug Bounds")) as GameObject;
 				debugObject.transform.localPosition = new Vector3(platformsBounds[i].center.x, platformsBounds[i].center.y, 0.5f);
 				debugObject.transform.localScale    = new Vector3(platformsBounds[i].width, platformsBounds[i].height, 1.0f);
-				debugObject.renderer.material.color = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
+				debugObject.GetComponent<Renderer>().material.color = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
 			}
 		}
 	}
@@ -594,7 +594,7 @@ public class GGMapComponent: MonoBehaviour {
 	
 	public void LoadGround(GameObject ground) {
 		this.groundComponent = ground.GetComponent<GGGroundComponent>();
-		this.groundCollider  = ground.collider2D;
+		this.groundCollider  = ground.GetComponent<Collider2D>();
 	}
 	
 	/* Getting configuration values. */
@@ -626,7 +626,7 @@ public class GGMapComponent: MonoBehaviour {
 	
 	// The amount of padding on the sides of the map, which is used for positioning platforms so
 	// that they don't overlap the walls.
-	public const float horizontalMapPadding = 1.0f;
+	public const float horizontalMapPadding = 0.25f;
 	
 	// The amount of padding at the top of the map, which prevents platforms from being placed too
 	// close to the top of the screen.

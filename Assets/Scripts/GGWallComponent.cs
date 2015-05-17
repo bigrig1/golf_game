@@ -10,7 +10,7 @@ public class GGWallComponent: MonoBehaviour {
 	/* Initializing. */
 	
 	public void Start() {
-		this.collider2D.sharedMaterial = GGGameSceneComponent.instance.physicsComponent.rockMaterial;
+		this.GetComponent<Collider2D>().sharedMaterial = GGGameSceneComponent.instance.physicsComponent.rockMaterial;
 		this.SetSheepSpawnPointsIfNeeded();
 	}
 	

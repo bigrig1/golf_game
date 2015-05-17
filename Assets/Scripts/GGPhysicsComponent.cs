@@ -59,11 +59,11 @@ public class GGPhysicsComponent: MonoBehaviour {
 		}
 		
 		foreach (var wallComponent in mapComponent.previousWallComponents) {
-			this.UpdateCollider(wallComponent.collider2D);
+			this.UpdateCollider(wallComponent.GetComponent<Collider2D>());
 		}
 		
 		foreach (var wallComponent in mapComponent.wallComponents) {
-			this.UpdateCollider(wallComponent.collider2D);
+			this.UpdateCollider(wallComponent.GetComponent<Collider2D>());
 		}
 		
 		this.UpdateCollider(mapComponent.groundCollider);

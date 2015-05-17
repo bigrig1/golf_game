@@ -12,8 +12,8 @@ public class GGArrowComponent: MonoBehaviour {
 		this.head                           = this.transform.Find("Head").gameObject;
 		this.body                           = this.transform.Find("Body").gameObject;
 		this.isFaded                        = false;
-		this.head.renderer.sortingLayerName = "Arrow";
-		this.body.renderer.sortingLayerName = "Arrow";
+		this.head.GetComponent<Renderer>().sortingLayerName = "Arrow";
+		this.body.GetComponent<Renderer>().sortingLayerName = "Arrow";
 		this.GenerateHeadMesh();
 		this.GenerateBodyMesh();
 	}
@@ -61,8 +61,8 @@ public class GGArrowComponent: MonoBehaviour {
 	private float _power = 0.0f;
 	
 	private void SetColor(Color color) {
-		this.head.renderer.material.color = color;
-		this.body.renderer.material.color = color;
+		this.head.GetComponent<Renderer>().material.color = color;
+		this.body.GetComponent<Renderer>().material.color = color;
 	}
 	
 	/* Generating meshes. */
