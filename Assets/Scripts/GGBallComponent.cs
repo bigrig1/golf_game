@@ -12,6 +12,7 @@ public class GGBallComponent: MonoBehaviour {
 		this.rigidbody2D          = this.GetComponent<Rigidbody2D>();
 		this.shotAudioSource      = this.transform.Find("Shot Audio").GetComponent<AudioSource>();
 		this.collisionAudioSource = this.transform.Find("Collision Audio").GetComponent<AudioSource>();
+		this.holeAudioSource      = this.transform.Find("Hole Audio").GetComponent<AudioSource>();
 	}
 	
 	/* Configuring the component. */
@@ -32,6 +33,7 @@ public class GGBallComponent: MonoBehaviour {
 	public float dirtPitchVariation  = 0.0f;
 	public float sandPitchVariation  = 0.0f;
 	public float sheepPitchVariation = 0.0f;
+	public float holePitchVariation  = 0.0f;
 	
 	public AudioClip[] smallShotAudioClips;
 	public AudioClip[] mediumShotAudioClips;
@@ -43,11 +45,14 @@ public class GGBallComponent: MonoBehaviour {
 	public AudioClip[] sandAudioClips;
 	public AudioClip[] sheepAudioClips;
 	
+	public AudioClip[] holeAudioClips;
+	
 	/* Accessing components. */
 	
 	new private Rigidbody2D rigidbody2D;
 	private AudioSource shotAudioSource;
 	private AudioSource collisionAudioSource;
+	private AudioSource holeAudioSource;
 	
 	/* Getting information about the ball. */
 	
@@ -61,6 +66,8 @@ public class GGBallComponent: MonoBehaviour {
 	public bool isInHole { get {
 		return this.containingHole != null;
 	} }
+	
+	public bool wasInHole;
 	
 	/* Shooting the ball. */
 	
@@ -201,12 +208,18 @@ public class GGBallComponent: MonoBehaviour {
 		this.BounceFromHole();
 	}
 	
-	/* Getting audio clips. */
+	/* Managing audio clips. */
 	
 	private System.Random random = new System.Random();
 	
 	private AudioClip GetRandomAudioClip(AudioClip[] clips) {
 		return clips[random.Next(clips.Length)];
+	}
+	
+	public void PlayHoleSound() {
+		this.holeAudioSource.pitch = 1.0f + Random.Range(-this.holePitchVariation, this.holePitchVariation);
+		this.holeAudioSource.clip  = this.GetRandomAudioClip(this.holeAudioClips);
+		this.holeAudioSource.Play();
 	}
 	
 	/* Updating. */
@@ -259,6 +272,11 @@ public class GGBallComponent: MonoBehaviour {
 			}
 		}
 		
+		if (this.isInHole && !this.wasInHole) {
+			this.PlayHoleSound();
+		}
+		
+		this.wasInHole      = this.isInHole;
 		this.containingHole = null;
 		
 		if (this.timeToPlugHole > 0.0f) {
