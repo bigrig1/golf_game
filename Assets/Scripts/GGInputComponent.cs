@@ -49,6 +49,7 @@ public class GGInputComponent: MonoBehaviour {
 				gameSceneComponent.mapComponent.BuildNextMap();
 				gameSceneComponent.cameraComponent.MoveToNextMap();
 				gameSceneComponent.ballComponent.PersistPosition();
+				gameSceneComponent.ballComponent.undoPosition = new Vector3();
 				GGSaveData.SetCurrentMapIndex(gameSceneComponent.mapComponent.currentMapIndex);
 				GGSaveData.DeleteSheepHitFlag((gameSceneComponent.mapComponent.currentMapIndex - 2) + "-0");
 				GGSaveData.DeleteSheepHitFlag((gameSceneComponent.mapComponent.currentMapIndex - 2) + "-1");
