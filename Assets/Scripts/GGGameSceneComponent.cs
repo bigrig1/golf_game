@@ -126,9 +126,11 @@ public class GGGameSceneComponent: MonoBehaviour {
 	/* Accessing game state. */
 	
 	// The game's base seed for the RNG.
+	[HideInInspector]
 	public int seed = 168403912;
 	
 	// The number of strokes remaining. Only relevant in normal/hard modes.
+	[HideInInspector]
 	public int remainingStrokeCount = 0;
 	
 	// The number of sheep the player has collected.
