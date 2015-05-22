@@ -14,6 +14,10 @@ public class GGCameraComponent: MonoBehaviour {
 		return this.moveStartTime > 0.0f;
 	} }
 	
+	public float scroll { get {
+		return this.transform.position.y - GGMapComponent.screenHeight / 2.0f;
+	} }
+	
 	/* Moving the camera. */
 	
 	public void MoveToNextMap() {
