@@ -67,6 +67,7 @@ public class GGBallComponent: MonoBehaviour {
 		return this.containingHole != null;
 	} }
 	
+	[HideInInspector]
 	public bool wasInHole;
 	
 	/* Shooting the ball. */
@@ -104,6 +105,7 @@ public class GGBallComponent: MonoBehaviour {
 	
 	// The world-space position that the ball should be reverted to if RestoreUndoPosition is
 	// called. This should be set before hitting the ball in case it goes off screen.
+	[HideInInspector]
 	public Vector3 undoPosition;
 	
 	public bool canRestoreUndoPosition { get {
