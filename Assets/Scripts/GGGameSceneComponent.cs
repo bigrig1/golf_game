@@ -56,6 +56,7 @@ public class GGGameSceneComponent: MonoBehaviour {
 		this.ballCollider    = this.ball.GetComponent<CircleCollider2D>();
 		this.arrowComponent  = this.arrow.GetComponent<GGArrowComponent>();
 		this.cameraComponent = Camera.main.GetComponent<GGCameraComponent>();
+		this.inputComponent  = this.GetComponent<GGInputComponent>();
 	}
 	
 	private void LoadWallPrototypes(GameObject container, string difficulty) {
@@ -118,6 +119,9 @@ public class GGGameSceneComponent: MonoBehaviour {
 	
 	// The camera component.
 	public GGCameraComponent cameraComponent { get; private set; }
+	
+	// The input component.
+	public GGInputComponent inputComponent { get; private set; }
 	
 	/* Accessing game state. */
 	

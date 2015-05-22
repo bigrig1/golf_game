@@ -20,6 +20,8 @@ public class GGUIComponent: MonoBehaviour {
 	public Text strokeCountLabel;
 	public Text strokeCountLabelShadow;
 	
+	public Button undoButton;
+	
 	/* Initializing. */
 	
 	public void Start() {
@@ -33,12 +35,14 @@ public class GGUIComponent: MonoBehaviour {
 	
 	public void FixedUpdate() {
 		var gameSceneComponent     = GGGameSceneComponent.instance;
+		var inputComponent         = gameSceneComponent.inputComponent;
 		var sheepCountString       = "" + gameSceneComponent.sheepCount;
 		var holeString             = "Hole " + (gameSceneComponent.mapComponent.currentMapIndex + 1);
 		sheepCountLabel.text       = sheepCountString;
 		sheepCountLabelShadow.text = sheepCountString;
 		holeLabel.text             = holeString;
 		holeLabelShadow.text       = holeString;
+		undoButton.interactable    = !inputComponent.ballHasBeenHit && gameSceneComponent.ballComponent.canRestoreUndoPosition;
 		
 		if (GGGameSceneComponent.mode != GGGameMode.Zen) {
 			var strokeCountString       = "" + gameSceneComponent.remainingStrokeCount;

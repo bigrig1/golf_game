@@ -99,11 +99,23 @@ public class GGBallComponent: MonoBehaviour {
 	// called. This should be set before hitting the ball in case it goes off screen.
 	public Vector3 undoPosition;
 	
+	public bool canRestoreUndoPosition { get {
+ 		return this.undoPosition != new Vector3() && (this.transform.position - this.undoPosition).sqrMagnitude > 0.5f;
+	} }
+	
 	public void RestoreUndoPosition() {
-		var position              = this.undoPosition;
-		position.y               += 0.275f;
-		this.transform.position   = position;
-		this.rigidbody2D.velocity = new Vector2();
+		var position                          = this.undoPosition;
+		position.y                           += 0.275f;
+		this.transform.position               = position;
+		this.rigidbody2D.velocity             = new Vector2();
+		this.rigidbody2D.isKinematic          = false;
+		this.durationUnderForceSleepThreshold = 0.0f;
+ 	}
+ 	
+ 	public void RestoreUndoPositionIfPossible() {
+ 		if (this.canRestoreUndoPosition) {
+ 			this.RestoreUndoPosition();
+ 		}
  	}
  	
  	public void RestoreUndoPositionOrGameOver() {

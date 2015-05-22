@@ -15,7 +15,7 @@ public class GGInputComponent: MonoBehaviour {
 	
 	// Whether or not the ball has been recently hit. This will be set to true when the player hits
 	// the ball and back to false once it comes to a rest.
-	private bool ballHasBeenHit = false;
+	public bool ballHasBeenHit { get; private set; }
 	
 	// Whether or not debug input is enabled. Should disable this before doing builds.
 	private bool debugInputIsEnabled = true;
@@ -176,10 +176,14 @@ public class GGInputComponent: MonoBehaviour {
 		}
 	}
 	
-	/* Responding to buttom presses. */
+	/* Responding to button presses. */
 	
 	public void MenuButtonWasPressed() {
 		Application.LoadLevel("Main Menu");
+	}
+	
+	public void UndoButtonWasPressed() {
+		GGGameSceneComponent.instance.ballComponent.RestoreUndoPositionIfPossible();
 	}
 	
 	/* Helpers. */
