@@ -13,6 +13,7 @@ public class GGMainMenuUIComponent: MonoBehaviour {
 		this.zenResetButton.SetActive(GGSaveData.HasSaveData(GGGameMode.Zen));
 		this.regularResetButton.SetActive(GGSaveData.HasSaveData(GGGameMode.Regular));
 		this.hardResetButton.SetActive(GGSaveData.HasSaveData(GGGameMode.Hard));
+		this.GetComponent<Canvas>().scaleFactor = GGBridge.GetScreenPixelScale();
 	}
 	
 	/* Accessing UI. */

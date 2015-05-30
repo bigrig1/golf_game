@@ -29,6 +29,7 @@ public class GGUIComponent: MonoBehaviour {
 		strokeCountIcon.gameObject.SetActive(strokeCountIsEnabled);
 		strokeCountLabel.gameObject.SetActive(strokeCountIsEnabled);
 		strokeCountLabelShadow.gameObject.SetActive(strokeCountIsEnabled);
+		this.GetComponent<Canvas>().scaleFactor = GGBridge.GetScreenPixelScale();
 	}
 	
 	/* Updating. */
