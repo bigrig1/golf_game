@@ -20,7 +20,7 @@ public class GGBackgroundComponent: MonoBehaviour {
 	
 	private void CreateClouds() {
 		var cloudCount         = (int)Random.Range(5.0f, 8.0f);
-		var cloudSectionHeight = GGMapComponent.screenHeight / (float)cloudCount;
+		var cloudSectionHeight = GGMapComponent.usableScreenHeight / (float)cloudCount;
 		var halfMapWidth       = GGMapComponent.mapWidth / 2.0f;
 		this.baseCloudVelocity = Random.Range(0.75f, 1.45f);
 		
@@ -60,7 +60,7 @@ public class GGBackgroundComponent: MonoBehaviour {
 			var xLimit         = 21.0f;
 			
 			if ((velocity < 0.0f && x < -xLimit) || (velocity >= 0.0f && x > xLimit)) {
-				var cloudSectionHeight  = GGMapComponent.screenHeight / (float)this.clouds.Count;
+				var cloudSectionHeight  = GGMapComponent.usableScreenHeight / (float)this.clouds.Count;
 				var position            = cloudComponent.position;
 				var baseY               = (float)i * cloudSectionHeight;
 				position.x              = -x * Random.Range(1.0f, 1.1f);
@@ -70,7 +70,7 @@ public class GGBackgroundComponent: MonoBehaviour {
 			}
 			
 			if (cloudComponent.transform.position.y < scroll - 1.5f) {
-				cloudComponent.yOffset       = scroll + GGMapComponent.screenHeight + Random.Range(0.5f, 2.0f);
+				cloudComponent.yOffset       = scroll + GGMapComponent.usableScreenHeight + Random.Range(0.5f, 2.0f);
 				cloudComponent.yOffsetScroll = scroll;
 			}
 		}

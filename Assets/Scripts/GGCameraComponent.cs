@@ -15,7 +15,7 @@ public class GGCameraComponent: MonoBehaviour {
 	} }
 	
 	public float scroll { get {
-		return this.transform.position.y - GGMapComponent.screenHeight / 2.0f;
+		return this.transform.position.y - GGMapComponent.usableScreenHeight / 2.0f;
 	} }
 	
 	/* Moving the camera. */
@@ -34,7 +34,7 @@ public class GGCameraComponent: MonoBehaviour {
 	public void Update() {
 		if (this.isMovingToNextMap) {
 			var mapComponent        = GGGameSceneComponent.instance.mapComponent;
-			var targetY             = mapComponent.yOffset - GGMapComponent.screenHeight * 0.5f;
+			var targetY             = mapComponent.yOffset - (GGMapComponent.usableScreenHeight - GGMapComponent.uiHeight) * 0.5f;
 			var duration            = Time.time - this.moveStartTime;
 			var progress            = Mathf.Clamp01(duration / GGCameraComponent.mapChangeDuration);
 			var position            = this.transform.position;

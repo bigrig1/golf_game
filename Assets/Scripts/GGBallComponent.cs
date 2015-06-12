@@ -266,7 +266,7 @@ public class GGBallComponent: MonoBehaviour {
 			
 			var isOffScreenVertically = (
 				screenPosition.y < 0.0f ||
-				screenPosition.y > GGMapComponent.screenHeight
+				screenPosition.y > GGMapComponent.usableScreenHeight
 			);
 			
 			if (isOffScreenHorizontally || isOffScreenVertically) {

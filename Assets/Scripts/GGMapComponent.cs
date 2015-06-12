@@ -602,8 +602,17 @@ public class GGMapComponent: MonoBehaviour {
 	// The width of each map. This defines where walls and platforms are placed.
 	public const float mapWidth = 18.5f;
 	
-	// The height of the entire screen.
-	public const float screenHeight = 36.0f;
+	// The height of the UI at the top of the screen, which is subtracted from the map height so
+	// that maps don't sit underneath the UI.
+	public const float uiHeight = 2.0f;
+	
+	// The height of the entire screen, including UI.
+	public const float fullScreenHeight = 36.0f;
+	
+	// The height of the screen that's usable for gameplay.
+	public static float usableScreenHeight { get {
+		return GGMapComponent.fullScreenHeight - GGMapComponent.uiHeight;
+	} }
 	
 	// The number of sections that each map is divided into vertically. This is one less than the
 	// number of sections that actually appear on the screen, since there is always a section from
@@ -613,12 +622,12 @@ public class GGMapComponent: MonoBehaviour {
 	// The height of an individual generated map. Maps overlap with each other, so the height is
 	// equal to the screen height minus the height of the single overlapping section.
 	public static float mapHeight { get {
-		return GGMapComponent.screenHeight - GGMapComponent.sectionHeight;
+		return GGMapComponent.usableScreenHeight - GGMapComponent.sectionHeight;
 	} }
 	
 	// The height of each section within a map.
 	public static float sectionHeight { get {
-		return GGMapComponent.screenHeight / (float)(GGMapComponent.sectionCount + 1);
+		return GGMapComponent.usableScreenHeight / (float)(GGMapComponent.sectionCount + 1);
 	} }
 	
 	// How far from the ground platforms must be in the first map that has the ground.
@@ -627,10 +636,6 @@ public class GGMapComponent: MonoBehaviour {
 	// The amount of padding on the sides of the map, which is used for positioning platforms so
 	// that they don't overlap the walls.
 	public const float horizontalMapPadding = 0.25f;
-	
-	// The amount of padding at the top of the map, which prevents platforms from being placed too
-	// close to the top of the screen.
-	public const float topMapPadding = 4.5f;
 	
 	// The ratio of the height of the inner bounds of a platform section to the full height of the
 	// section. If this value is 1.0, the inner section will be just as tall as the outer section,
