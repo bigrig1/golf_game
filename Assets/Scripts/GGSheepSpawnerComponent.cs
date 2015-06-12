@@ -39,7 +39,7 @@ public class GGSheepSpawnerComponent: MonoBehaviour {
 		rigidbody2D.velocity       = this.baseVelocity * scale * Random.Range(0.85f, 1.0f);
 		
 		sheep.transform.position = new Vector3(
-			-6.0f + 12.0f * Random.value,
+			-6.0f + 13.0f * Random.value,
 			36.5f + offset + Random.value * 3.5f,
 			2.0f - scale
 		);
