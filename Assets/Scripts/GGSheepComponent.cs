@@ -9,7 +9,7 @@ using UnityEngine;
 public class GGSheepComponent: MonoBehaviour {
 	/* Initializing. */
 	
-	public void Start() {
+	public void Awake() {
 		this.rigidbody2D = this.GetComponent<Rigidbody2D>();
 	}
 	
@@ -18,25 +18,44 @@ public class GGSheepComponent: MonoBehaviour {
 	// Whether or not this is a hanging sheep.
 	public bool isHanging = false;
 	
+	public bool managesVelocity = true;
+	
 	// The sheep's ID.
 	public string id = "";
 	
 	/* Getting components. */
 	
-	new public Rigidbody2D rigidbody2D;
+	public Rigidbody2D rigidbody2D;
 	
 	/* Responding to collisions. */
 	
 	public void OnCollisionEnter2D(Collision2D collision) {
 		if (collision.collider.GetComponent<GGBallComponent>() != null) {
-			var impulse                  = new Vector2(-collision.relativeVelocity.x, Mathf.Max(0.0f, -collision.relativeVelocity.y)) * 0.45f;
-			this.rigidbody2D.isKinematic = false;
-			this.isFalling               = true;
-			this.fallTime                = 0.0f;
-			this.gameObject.layer        = 0;
+			this.MakeFall(false);
+			var impulse = new Vector2(-collision.relativeVelocity.x, Mathf.Max(0.0f, -collision.relativeVelocity.y)) * 0.45f;
 			this.rigidbody2D.AddForce(impulse, ForceMode2D.Impulse);
 			GGGameSceneComponent.instance.SheepWasHit(this);
 		}
+	}
+	
+	/* Making sheep fall. */
+	
+	public void MakeFall(bool parachuteImmediately) {
+		this.rigidbody2D.isKinematic = false;
+		this.isFalling               = true;
+		this.fallTime                = 0.0f;
+		this.gameObject.layer        = 0;
+		
+		if (parachuteImmediately) {
+			this.DeployParachute();
+		}
+	}
+	
+	private void DeployParachute() {
+		this.isFalling                = false;
+		this.isParachuting            = true;
+		this.rigidbody2D.velocity    *= 0.75f;
+		this.rigidbody2D.gravityScale = 0.0f;
 	}
 	
 	/* Updating. */
@@ -50,14 +69,11 @@ public class GGSheepComponent: MonoBehaviour {
 			this.fallTime += Time.deltaTime;
 			
 			if (this.fallTime > 0.7f) {
-				this.isFalling                = false;
-				this.isParachuting            = true;
-				this.rigidbody2D.velocity    *= 0.75f;
-				this.rigidbody2D.gravityScale = 0.0f;
+				this.DeployParachute();
 			}
 		}
 		
-		if (this.isParachuting) {
+		if (this.isParachuting && this.managesVelocity) {
 			var velocity              = this.rigidbody2D.velocity;
 			velocity.x               *= 0.985f;
 			velocity.y                = Mathf.MoveTowards(velocity.y, Mathf.Min(-2.5f, velocity.y), 0.1f);
