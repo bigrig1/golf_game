@@ -180,7 +180,8 @@ public class GGInputComponent: MonoBehaviour {
 	/* Responding to button presses. */
 	
 	public void MenuButtonWasPressed() {
-		Application.LoadLevel("Main Menu");
+		GGFaderComponent.shouldFadeIn = true;
+		GGFaderComponent.FadeOut("Main Menu");
 	}
 	
 	public void UndoButtonWasPressed() {

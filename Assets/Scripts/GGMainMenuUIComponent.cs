@@ -26,17 +26,20 @@ public class GGMainMenuUIComponent: MonoBehaviour {
 	
 	public void ZenModeButtonWasPressed() {
 		GGGameSceneComponent.mode = GGGameMode.Zen;
-		Application.LoadLevel("Game");
+		GGFaderComponent.shouldFadeIn = true;
+		GGFaderComponent.FadeOut("Game");
 	}
 	
 	public void RegularModeButtonWasPressed() {
 		GGGameSceneComponent.mode = GGGameMode.Regular;
-		Application.LoadLevel("Game");
+		GGFaderComponent.shouldFadeIn = true;
+		GGFaderComponent.FadeOut("Game");
 	}
 	
 	public void HardModeButtonWasPressed() {
 		GGGameSceneComponent.mode = GGGameMode.Hard;
-		Application.LoadLevel("Game");
+		GGFaderComponent.shouldFadeIn = true;
+		GGFaderComponent.FadeOut("Game");
 	}
 	
 	public void ZenResetButtonWasPressed() {

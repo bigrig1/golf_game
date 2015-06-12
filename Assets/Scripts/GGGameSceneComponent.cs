@@ -74,7 +74,8 @@ public class GGGameSceneComponent: MonoBehaviour {
 	public void GameOverMan() {
 		// TODO: Do something interesting.
 		GGSaveData.DeleteSaveData(GGGameSceneComponent.mode);
-		Application.LoadLevel("Main Menu");
+		GGFaderComponent.shouldFadeIn = true;
+		GGFaderComponent.FadeOut("Main Menu");
 	}
 	
 	/* Accessing the component. */
