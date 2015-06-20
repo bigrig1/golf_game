@@ -25,7 +25,7 @@ public class GGSheepComponent: MonoBehaviour {
 	
 	/* Getting components. */
 	
-	public Rigidbody2D rigidbody2D;
+	new public Rigidbody2D rigidbody2D;
 	
 	/* Responding to collisions. */
 	

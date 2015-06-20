@@ -10,8 +10,8 @@ public class GGInputComponent: MonoBehaviour {
 	
 	// Where the touch or click began as well as the input for the current frame in world space.
 	// Will be null if the user is not touching or clicking.
-	private Vector2? inputOrigin;
-	private Vector2? currentInput;
+	public Vector2? inputOrigin  { get; private set; }
+	public Vector2? currentInput { get; private set; }
 	
 	// Whether or not the ball has been recently hit. This will be set to true when the player hits
 	// the ball and back to false once it comes to a rest.
