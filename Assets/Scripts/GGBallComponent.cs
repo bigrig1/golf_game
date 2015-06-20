@@ -70,6 +70,8 @@ public class GGBallComponent: MonoBehaviour {
 	[HideInInspector]
 	public bool wasInHole;
 	
+	private float lastParticleEffectTime;
+	
 	/* Shooting the ball. */
 	
 	public void Shoot(Vector2 force) {
@@ -166,13 +168,16 @@ public class GGBallComponent: MonoBehaviour {
 	private bool shouldCancelNextCollisionAudioEvent = false;
 	
 	public void OnCollisionEnter2D(Collision2D collision) {
-		if (collision.relativeVelocity.magnitude > this.collisionTriggerForce) {
+		var magnitude = collision.relativeVelocity.magnitude;
+		
+		if (magnitude > this.collisionTriggerForce) {
+			var colliderName = collision.collider.gameObject.name;
+			
 			if (this.shouldCancelNextCollisionAudioEvent) {
 				this.shouldCancelNextCollisionAudioEvent = false;
 			}
 			else {
-				var colliderName                 = collision.collider.gameObject.name;
-				var magnitude                    = collision.relativeVelocity.magnitude;
+				
 				var forceRange                   = this.maxCollisionVolumeForce - this.minCollisionVolumeForce;
 				var volumeRange                  = this.maxCollisionVolume - this.minCollisionVolume;
 				var pitchVariation               = this.collisionPitchVariation;
@@ -192,6 +197,10 @@ public class GGBallComponent: MonoBehaviour {
 				
 				this.collisionAudioSource.pitch = 1.0f + Random.Range(-pitchVariation, pitchVariation);
 				this.collisionAudioSource.Play();
+			}
+			
+			if (magnitude > 8.0f && Time.time - this.lastParticleEffectTime > 0.075f) {
+				this.SpawnParticles(magnitude, colliderName);
 			}
 		}
 	}
@@ -222,6 +231,34 @@ public class GGBallComponent: MonoBehaviour {
 		this.holeAudioSource.pitch = 1.0f + Random.Range(-this.holePitchVariation, this.holePitchVariation);
 		this.holeAudioSource.clip  = this.GetRandomAudioClip(this.holeAudioClips);
 		this.holeAudioSource.Play();
+	}
+	
+	/* Spawning particles. */
+	
+	private void SpawnParticles(float magnitude, string surfaceType) {
+		var particleCount = (int)Mathf.Round(Mathf.Clamp(magnitude / 3.75f, 2.0f, 6.0f));
+		Color color;
+		
+		switch (surfaceType) {
+			case "Dirt": color = new Color(0.7f,  0.475f, 0.1f); break;
+			case "Plug":
+			case "Ground":
+			case "Grass": color = new Color(0.35f, 0.6f, 0.1f);  break;
+			case "Sand":  color = new Color(0.85f, 0.8f, 0.65f); break;
+			default:      return;
+		}
+		
+		for (var i = 0; i < particleCount; i += 1) {
+			var particle                = GameObject.Instantiate(Resources.Load("Prefabs/Particle")) as GameObject;
+			var renderer                = particle.GetComponent<Renderer>();
+			var rigidbody2D             = particle.GetComponent<Rigidbody2D>();
+			var force                   = new Vector2(Random.Range(-2.0f, 2.0f), Random.Range(0.0f, 2.0f));
+			renderer.material.color     = color;
+			particle.transform.position = this.transform.position;
+			rigidbody2D.AddForce(force, ForceMode2D.Impulse);
+		}
+		
+		this.lastParticleEffectTime = Time.time;
 	}
 	
 	/* Updating. */
