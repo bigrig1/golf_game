@@ -18,7 +18,13 @@ public class GGCloudComponent: MonoBehaviour {
 	/* Updating. */
 	
 	public void Update() {
-		var cameraScroll   = GGGameSceneComponent.instance.cameraComponent.scroll;
+		var cameraScroll       = 0.0f;
+		var gameSceneComponent = GGGameSceneComponent.instance;
+		
+		if (gameSceneComponent != null && gameSceneComponent.cameraComponent != null) {
+			cameraScroll = gameSceneComponent.cameraComponent.scroll;
+		}
+		
 		var relativeScroll = cameraScroll - this.yOffsetScroll;
 		this.position.x   += velocity * Time.deltaTime * (1.0f - this.scrollFactor);
 		

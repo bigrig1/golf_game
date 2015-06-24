@@ -50,7 +50,12 @@ public class GGBackgroundComponent: MonoBehaviour {
 	/* Updating. */
 	
 	public void FixedUpdate() {
-		var scroll = GGGameSceneComponent.instance.cameraComponent.scroll;
+		var scroll             = 0.0f;
+		var gameSceneComponent = GGGameSceneComponent.instance;
+		
+		if (gameSceneComponent != null && gameSceneComponent.cameraComponent != null) {
+			scroll = gameSceneComponent.cameraComponent.scroll;
+		}
 		
 		for (var i = 0; i < this.clouds.Count; i += 1) {
 			var cloud          = this.clouds[i];
