@@ -16,7 +16,7 @@ public class GGBackgroundComponent: MonoBehaviour {
 	/* Managing clouds. */
 	
 	private List<GameObject> clouds = new List<GameObject>();
-	private float baseCloudVelocity = 0.0f;
+	public float baseCloudVelocity = 0.0f;
 	
 	private void CreateClouds() {
 		var cloudCount         = (int)Random.Range(5.0f, 8.0f);
