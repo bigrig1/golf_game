@@ -33,7 +33,7 @@ public class GGSheepSpawnerComponent: MonoBehaviour {
 	
 	private void ResetSheep(GameObject sheep, float offset) {
 		var rigidbody2D            = sheep.GetComponent<Rigidbody2D>();
-		var scale                  = Random.Range(0.4f, 1.0f);
+		var scale                  = Random.Range(0.25f, 0.6f);
 		var isFlipped              = Random.value > 0.5f;
 		sheep.transform.localScale = new Vector3(isFlipped ? -scale : scale, scale, 1.0f);
 		rigidbody2D.velocity       = this.baseVelocity * scale * Random.Range(0.85f, 1.0f);

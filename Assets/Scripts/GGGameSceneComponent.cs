@@ -27,8 +27,14 @@ public class GGGameSceneComponent: MonoBehaviour {
 		this.physicsComponent = this.GetComponent<GGPhysicsComponent>();
 		this.sheepCount       = GGSaveData.GetSheepCount();
 		this.LoadGameObjects();
-		this.ballComponent.LoadPersistedPosition();
+		
+		var positionWasLoaded = this.ballComponent.LoadPersistedPosition();
+		
 		this.mapComponent.BuildFirstMap(GGSaveData.GetCurrentMapIndex());
+		
+		if (!positionWasLoaded) {
+			this.mapComponent.SetInitialBallPosition();
+		}
 	}
 	
 	private void LoadGameObjects() {
@@ -51,12 +57,13 @@ public class GGGameSceneComponent: MonoBehaviour {
 			}
 		}
 		
-		this.ballComponent   = this.ball.GetComponent<GGBallComponent>();
-		this.ballRigidbody2D = this.ball.GetComponent<Rigidbody2D>();
-		this.ballCollider    = this.ball.GetComponent<CircleCollider2D>();
-		this.arrowComponent  = this.arrow.GetComponent<GGArrowComponent>();
-		this.cameraComponent = Camera.main.GetComponent<GGCameraComponent>();
-		this.inputComponent  = this.GetComponent<GGInputComponent>();
+		this.ballComponent       = this.ball.GetComponent<GGBallComponent>();
+		this.ballRigidbody2D     = this.ball.GetComponent<Rigidbody2D>();
+		this.ballCollider        = this.ball.GetComponent<CircleCollider2D>();
+		this.arrowComponent      = this.arrow.GetComponent<GGArrowComponent>();
+		this.cameraComponent     = Camera.main.GetComponent<GGCameraComponent>();
+		this.inputComponent      = this.GetComponent<GGInputComponent>();
+		this.backgroundComponent = this.GetComponent<GGBackgroundComponent>();
 	}
 	
 	private void LoadWallPrototypes(GameObject container, string difficulty) {
@@ -123,6 +130,8 @@ public class GGGameSceneComponent: MonoBehaviour {
 	
 	// The input component.
 	public GGInputComponent inputComponent { get; private set; }
+	
+	public GGBackgroundComponent backgroundComponent { get; private set; }
 	
 	/* Accessing game state. */
 	

@@ -16,7 +16,7 @@ public class GGBackgroundComponent: MonoBehaviour {
 	/* Managing clouds. */
 	
 	private List<GameObject> clouds = new List<GameObject>();
-	private float baseCloudVelocity = 0.0f;
+	public float baseCloudVelocity = 0.0f;
 	
 	private void CreateClouds() {
 		var cloudCount         = (int)Random.Range(5.0f, 8.0f);
@@ -50,7 +50,12 @@ public class GGBackgroundComponent: MonoBehaviour {
 	/* Updating. */
 	
 	public void FixedUpdate() {
-		var scroll = GGGameSceneComponent.instance.cameraComponent.scroll;
+		var scroll             = 0.0f;
+		var gameSceneComponent = GGGameSceneComponent.instance;
+		
+		if (gameSceneComponent != null && gameSceneComponent.cameraComponent != null) {
+			scroll = gameSceneComponent.cameraComponent.scroll;
+		}
 		
 		for (var i = 0; i < this.clouds.Count; i += 1) {
 			var cloud          = this.clouds[i];
