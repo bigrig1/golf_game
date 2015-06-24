@@ -27,8 +27,14 @@ public class GGGameSceneComponent: MonoBehaviour {
 		this.physicsComponent = this.GetComponent<GGPhysicsComponent>();
 		this.sheepCount       = GGSaveData.GetSheepCount();
 		this.LoadGameObjects();
-		this.ballComponent.LoadPersistedPosition();
+		
+		var positionWasLoaded = this.ballComponent.LoadPersistedPosition();
+		
 		this.mapComponent.BuildFirstMap(GGSaveData.GetCurrentMapIndex());
+		
+		if (!positionWasLoaded) {
+			this.mapComponent.SetInitialBallPosition();
+		}
 	}
 	
 	private void LoadGameObjects() {

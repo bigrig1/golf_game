@@ -154,13 +154,16 @@ public class GGBallComponent: MonoBehaviour {
 	}
 	
 	// Resets the ball's position to the previously-saved position, if any.
-	public void LoadPersistedPosition() {
+	public bool LoadPersistedPosition() {
 		if (GGSaveData.HasBallPosition()) {
 			var position            = this.transform.position;
 			position.x              = GGSaveData.GetBallX();
 			position.y              = GGSaveData.GetBallY() + GGGameSceneComponent.instance.mapComponent.yBottom;
 			this.transform.position = position;
+			return true;
 		}
+		
+		return false;
 	}
 	
 	/* Responding to events. */

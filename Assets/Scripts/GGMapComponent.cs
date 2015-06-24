@@ -139,26 +139,24 @@ public class GGMapComponent: MonoBehaviour {
 		this.initialMapIndex = initialMapIndex;
 		this.currentMapIndex = initialMapIndex;
 		
-		if (initialMapIndex > 0) {
-			this.yOffset = GGMapComponent.sectionHeight - GGMapComponent.mapHeight;
-			this.BuildMap(this.currentMapIndex - 1, false);
-			
-			foreach (var wallComponent in this.wallComponents) {
-				this.previousWallComponents.Add(wallComponent);
-			}
-			
-			foreach (var platformComponent in this.platformComponents) {
-				this.previousPlatformComponents.Add(platformComponent);
-				
-				if (platformComponent.hole != null) {
-					platformComponent.hole.GetComponent<GGHoleComponent>().Plug();
-				}
-			}
-			
-			this.wallComponents.Clear();
-			this.platformComponents.Clear();
-			this.groundComponent.gameObject.SetActive(false);
+		this.yOffset = GGMapComponent.sectionHeight - GGMapComponent.mapHeight;
+		this.BuildMap(this.currentMapIndex - 1, false);
+		
+		foreach (var wallComponent in this.wallComponents) {
+			this.previousWallComponents.Add(wallComponent);
 		}
+		
+		foreach (var platformComponent in this.platformComponents) {
+			this.previousPlatformComponents.Add(platformComponent);
+			
+			if (platformComponent.hole != null) {
+				platformComponent.hole.GetComponent<GGHoleComponent>().Plug();
+			}
+		}
+		
+		this.wallComponents.Clear();
+		this.platformComponents.Clear();
+		this.groundComponent.gameObject.SetActive(false);
 		
 		this.yOffset = GGMapComponent.sectionHeight;
 		this.BuildMap(this.currentMapIndex, false);
@@ -229,10 +227,7 @@ public class GGMapComponent: MonoBehaviour {
 		this.AddWalls(mapIndex, isNextMap, random);
 		this.AddPlatforms(mapIndex, isNextMap, random);
 		this.AddSheeps(isNextMap, random);
-		
-		if (mapIndex > 2) {
-			this.groundComponent.gameObject.SetActive(false);
-		}
+		this.groundComponent.gameObject.SetActive(false);
 		
 		if (isNextMap) {
 			foreach (var platformComponent in this.nextPlatformComponents) {
@@ -376,13 +371,6 @@ public class GGMapComponent: MonoBehaviour {
 		
 		var platformsBounds      = new Rect[selectedSizeClasses.Length];
 		var totalSizeClassWeight = 0.0f;
-		
-		for (var i = 0; i < selectedSizeClasses.Length; i += 1) {
-			var sizeClass                 = selectedSizeClasses[i];
-			var newIndex                  = random.Next(i, selectedSizeClasses.Length);
-			selectedSizeClasses[i]        = selectedSizeClasses[newIndex];
-			selectedSizeClasses[newIndex] = sizeClass;
-		}
 		
 		foreach (var sizeClass in selectedSizeClasses) {
 			totalSizeClassWeight += sizeClass.GetWeight();
@@ -597,6 +585,26 @@ public class GGMapComponent: MonoBehaviour {
 		this.groundCollider  = ground.GetComponent<Collider2D>();
 	}
 	
+	/* Setting ball positions. */
+	
+	public void SetInitialBallPosition() {
+		GGPlatformComponent lowestPlatformComponent = null;
+		var lowestY                                 = float.MaxValue;
+		
+		foreach (var platformComponent in this.platformComponents) {
+			var currentLowestY = platformComponent.highestY;
+			
+			if (currentLowestY < lowestY) {
+				lowestPlatformComponent = platformComponent;
+				lowestY                 = currentLowestY;
+			}
+		}
+		
+		var ballTransform      = GGGameSceneComponent.instance.ballComponent.transform;
+		var x                  = UnityEngine.Random.Range(lowestPlatformComponent.lowestX + 0.2f, lowestPlatformComponent.highestX - 0.2f);
+		ballTransform.position = new Vector3(x, lowestY + 0.1f, 0.0f);
+	}
+	
 	/* Getting configuration values. */
 	
 	// The width of each map. This defines where walls and platforms are placed.
@@ -630,9 +638,6 @@ public class GGMapComponent: MonoBehaviour {
 		return GGMapComponent.usableScreenHeight / (float)(GGMapComponent.sectionCount + 1);
 	} }
 	
-	// How far from the ground platforms must be in the first map that has the ground.
-	public const float groundMargin = 2.0f;
-	
 	// The amount of padding on the sides of the map, which is used for positioning platforms so
 	// that they don't overlap the walls.
 	public const float horizontalMapPadding = 0.25f;
@@ -658,14 +663,24 @@ public class GGMapComponent: MonoBehaviour {
 	// starting at map 0.
 	public static GGPlatformArrangement[] map0PlatformArrangements = new [] {
 		new GGPlatformArrangement(0.9f, GGPlatformSizeClass.Large),
-		new GGPlatformArrangement(0.7f, GGPlatformSizeClass.Large, GGPlatformSizeClass.Medium),
-		new GGPlatformArrangement(0.8f, GGPlatformSizeClass.Large, GGPlatformSizeClass.Small),
+		
+		new GGPlatformArrangement(0.35f, GGPlatformSizeClass.Large,  GGPlatformSizeClass.Medium),
+		new GGPlatformArrangement(0.35f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Large),
+		
+		new GGPlatformArrangement(0.4f, GGPlatformSizeClass.Large, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.4f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Large),
 		
 		new GGPlatformArrangement(0.95f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Medium),
-		new GGPlatformArrangement(1.0f,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
-		new GGPlatformArrangement(0.75f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small),
+		
+		new GGPlatformArrangement(0.5f,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.5f,  GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium),
+		
+		new GGPlatformArrangement(0.25f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.25f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.25f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium),
 		
 		new GGPlatformArrangement(1.0f,  GGPlatformSizeClass.Small, GGPlatformSizeClass.Small),
+		
 		new GGPlatformArrangement(0.85f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small)
 	};
 	
@@ -673,16 +688,28 @@ public class GGMapComponent: MonoBehaviour {
 	// starting at map 77.
 	public static GGPlatformArrangement[] map77PlatformArrangements = new [] {
 		new GGPlatformArrangement(0.7f, GGPlatformSizeClass.Large),
-		new GGPlatformArrangement(0.5f, GGPlatformSizeClass.Large, GGPlatformSizeClass.Medium),
-		new GGPlatformArrangement(0.6f, GGPlatformSizeClass.Large, GGPlatformSizeClass.Small),
+		
+		new GGPlatformArrangement(0.25f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Medium),
+		new GGPlatformArrangement(0.25f, GGPlatformSizeClass.Large,  GGPlatformSizeClass.Large),
+		
+		new GGPlatformArrangement(0.3f, GGPlatformSizeClass.Large, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.3f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Large),
 		
 		new GGPlatformArrangement(0.65f, GGPlatformSizeClass.Medium),
+		
 		new GGPlatformArrangement(0.75f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Medium),
-		new GGPlatformArrangement(1.0f,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
-		new GGPlatformArrangement(0.65f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small),
+		
+		new GGPlatformArrangement(0.5f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.5f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium),
+		
+		new GGPlatformArrangement(0.22f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.22f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.22f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium),
 		
 		new GGPlatformArrangement(0.2f, GGPlatformSizeClass.Small),
+		
 		new GGPlatformArrangement(1.1f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small),
+		
 		new GGPlatformArrangement(0.9f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small)
 	};
 	
@@ -690,16 +717,28 @@ public class GGMapComponent: MonoBehaviour {
 	// starting at map 193.
 	public static GGPlatformArrangement[] map193PlatformArrangements = new [] {
 		new GGPlatformArrangement(0.5f, GGPlatformSizeClass.Large),
-		new GGPlatformArrangement(0.3f, GGPlatformSizeClass.Large, GGPlatformSizeClass.Medium),
-		new GGPlatformArrangement(0.4f, GGPlatformSizeClass.Large, GGPlatformSizeClass.Small),
+		
+		new GGPlatformArrangement(0.15f, GGPlatformSizeClass.Large,  GGPlatformSizeClass.Medium),
+		new GGPlatformArrangement(0.15f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Large),
+		
+		new GGPlatformArrangement(0.2f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.2f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Large),
 		
 		new GGPlatformArrangement(0.85f, GGPlatformSizeClass.Medium),
-		new GGPlatformArrangement(0.7f,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Medium),
-		new GGPlatformArrangement(0.85f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
-		new GGPlatformArrangement(0.5f,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small),
+		
+		new GGPlatformArrangement(0.7f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Medium),
+		
+		new GGPlatformArrangement(0.425f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.425f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium),
+		
+		new GGPlatformArrangement(0.17f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.17f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.17f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium),
 		
 		new GGPlatformArrangement(0.5f, GGPlatformSizeClass.Small),
+		
 		new GGPlatformArrangement(1.2f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small),
+		
 		new GGPlatformArrangement(0.9f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small)
 	};
 	
@@ -707,16 +746,28 @@ public class GGMapComponent: MonoBehaviour {
 	// starting at map 259.
 	public static GGPlatformArrangement[] map259PlatformArrangements = new [] {
 		new GGPlatformArrangement(0.4f, GGPlatformSizeClass.Large),
-		new GGPlatformArrangement(0.1f, GGPlatformSizeClass.Large, GGPlatformSizeClass.Medium),
-		new GGPlatformArrangement(0.3f, GGPlatformSizeClass.Large, GGPlatformSizeClass.Small),
+		
+		new GGPlatformArrangement(0.05f, GGPlatformSizeClass.Large,  GGPlatformSizeClass.Medium),
+		new GGPlatformArrangement(0.05f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Large),
+		
+		new GGPlatformArrangement(0.15f, GGPlatformSizeClass.Large, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.15f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Large),
 		
 		new GGPlatformArrangement(0.9f,  GGPlatformSizeClass.Medium),
+		
 		new GGPlatformArrangement(0.4f,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Medium),
-		new GGPlatformArrangement(0.65f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
-		new GGPlatformArrangement(0.4f,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small),
+		
+		new GGPlatformArrangement(0.325f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.325f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium),
+		
+		new GGPlatformArrangement(0.13f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.13f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.13f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium),
 		
 		new GGPlatformArrangement(0.6f,  GGPlatformSizeClass.Small),
+		
 		new GGPlatformArrangement(1.25f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small),
+		
 		new GGPlatformArrangement(0.95f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small)
 	};
 	
@@ -724,16 +775,28 @@ public class GGMapComponent: MonoBehaviour {
 	// starting at map 588.
 	public static GGPlatformArrangement[] map588PlatformArrangements = new [] {
 		new GGPlatformArrangement(0.3f,  GGPlatformSizeClass.Large),
-		new GGPlatformArrangement(0.05f, GGPlatformSizeClass.Large, GGPlatformSizeClass.Medium),
-		new GGPlatformArrangement(0.2f,  GGPlatformSizeClass.Large, GGPlatformSizeClass.Small),
+		
+		new GGPlatformArrangement(0.025f, GGPlatformSizeClass.Large,  GGPlatformSizeClass.Medium),
+		new GGPlatformArrangement(0.025f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
+		
+		new GGPlatformArrangement(0.1f,  GGPlatformSizeClass.Large, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.1f,  GGPlatformSizeClass.Small, GGPlatformSizeClass.Large),
 		
 		new GGPlatformArrangement(0.8f,  GGPlatformSizeClass.Medium),
+		
 		new GGPlatformArrangement(0.35f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Medium),
-		new GGPlatformArrangement(0.6f,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
-		new GGPlatformArrangement(0.3f,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small),
+		
+		new GGPlatformArrangement(0.3f,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.3f,  GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium),
+		
+		new GGPlatformArrangement(0.1f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.1f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.1f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium),
 		
 		new GGPlatformArrangement(0.7f,  GGPlatformSizeClass.Small),
+		
 		new GGPlatformArrangement(1.25f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small),
+		
 		new GGPlatformArrangement(0.95f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small)
 	};
 	
@@ -741,15 +804,25 @@ public class GGMapComponent: MonoBehaviour {
 	// starting at map 1024.
 	public static GGPlatformArrangement[] map1024PlatformArrangements = new [] {
 		new GGPlatformArrangement(0.2f, GGPlatformSizeClass.Large),
-		new GGPlatformArrangement(0.1f, GGPlatformSizeClass.Large, GGPlatformSizeClass.Small),
+		
+		new GGPlatformArrangement(0.05f, GGPlatformSizeClass.Large, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.05f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Large),
 		
 		new GGPlatformArrangement(0.8f,  GGPlatformSizeClass.Medium),
+		
 		new GGPlatformArrangement(0.25f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Medium),
-		new GGPlatformArrangement(0.35f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
-		new GGPlatformArrangement(0.2f,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small),
+		
+		new GGPlatformArrangement(0.175f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.175f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium),
+		
+		new GGPlatformArrangement(0.07f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.07f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.07f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium),
 		
 		new GGPlatformArrangement(0.75f, GGPlatformSizeClass.Small),
+		
 		new GGPlatformArrangement(1.25f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small),
+		
 		new GGPlatformArrangement(0.95f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small)
 	};
 	
@@ -757,15 +830,25 @@ public class GGMapComponent: MonoBehaviour {
 	// starting at map 3331.
 	public static GGPlatformArrangement[] map3331PlatformArrangements = new [] {
 		new GGPlatformArrangement(0.1f, GGPlatformSizeClass.Large),
-		new GGPlatformArrangement(0.01f, GGPlatformSizeClass.Large, GGPlatformSizeClass.Small),
+		
+		new GGPlatformArrangement(0.005f, GGPlatformSizeClass.Large, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.005f, GGPlatformSizeClass.Small, GGPlatformSizeClass.Large),
 		
 		new GGPlatformArrangement(0.6f, GGPlatformSizeClass.Medium),
+		
 		new GGPlatformArrangement(0.1f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Medium),
-		new GGPlatformArrangement(0.2f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
-		new GGPlatformArrangement(0.1f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small),
+		
+		new GGPlatformArrangement(0.1f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.1f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium),
+		
+		new GGPlatformArrangement(0.033f, GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.033f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium, GGPlatformSizeClass.Small),
+		new GGPlatformArrangement(0.033f, GGPlatformSizeClass.Small,  GGPlatformSizeClass.Small,  GGPlatformSizeClass.Medium),
 		
 		new GGPlatformArrangement(0.75f, GGPlatformSizeClass.Small),
+		
 		new GGPlatformArrangement(1.0f,  GGPlatformSizeClass.Small, GGPlatformSizeClass.Small),
+		
 		new GGPlatformArrangement(0.5f,  GGPlatformSizeClass.Small, GGPlatformSizeClass.Small, GGPlatformSizeClass.Small)
 	};
 	
