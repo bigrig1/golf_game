@@ -13,7 +13,6 @@ public class GGUIComponent: MonoBehaviour {
 	public Canvas canvas;
 	public Text holeLabel;
 	public Text sheepCountLabel;
-	public Image strokeCountIcon;
 	public Text strokeCountLabel;
 	public Text powerLabel;
 	public Text powerLabelShadow;
@@ -23,7 +22,6 @@ public class GGUIComponent: MonoBehaviour {
 	
 	public void Start() {
 		var strokeCountIsEnabled = GGGameSceneComponent.mode != GGGameMode.Zen;
-		strokeCountIcon.gameObject.SetActive(strokeCountIsEnabled);
 		strokeCountLabel.gameObject.SetActive(strokeCountIsEnabled);
 	}
 	
@@ -41,7 +39,9 @@ public class GGUIComponent: MonoBehaviour {
 		undoButton.interactable = !inputComponent.ballHasBeenHit && ballComponent.canRestoreUndoPosition;
 		
 		if (GGGameSceneComponent.mode != GGGameMode.Zen) {
-			var strokeCountString = "" + gameSceneComponent.remainingStrokeCount;
+			var count             = gameSceneComponent.remainingStrokeCount;
+			var noun              = count == 1 ? "stroke" : "strokes";
+			var strokeCountString = "" + count + "\n" + noun;
 			strokeCountLabel.text = strokeCountString;
 		}
 		
