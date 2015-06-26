@@ -182,6 +182,10 @@ public class GGInputComponent: MonoBehaviour {
 	/* Responding to button presses. */
 	
 	public void MenuButtonWasPressed() {
+		if (GGGameSceneComponent.mode != GGGameMode.Zen && GGGameSceneComponent.instance.remainingStrokeCount <= 0) {
+			GGSaveData.DeleteSaveData(GGGameSceneComponent.mode);
+		}
+		
 		GGFaderComponent.shouldFadeIn = true;
 		GGFaderComponent.FadeOut("Main Menu");
 	}
