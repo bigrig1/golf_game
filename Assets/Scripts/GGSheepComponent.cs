@@ -11,7 +11,8 @@ public class GGSheepComponent: MonoBehaviour {
 	
 	public void Awake() {
 		this.rigidbody2D = this.GetComponent<Rigidbody2D>();
-		this.audioSource = this.transform.Find("Audio").GetComponent<AudioSource>();
+		this.collisionAudioSource = this.transform.Find("Collision Audio").GetComponent<AudioSource>();
+		this.parachuteAudioSource = this.transform.Find("Parachute Audio").GetComponent<AudioSource>();
 	}
 	
 	/* Configuring the sheep. */
@@ -27,14 +28,22 @@ public class GGSheepComponent: MonoBehaviour {
 	[HideInInspector]
 	public string id = "";
 	
-	public float collisionPitchVariation = 0.1f;
+	public float collisionPitchVariation      = 0.1f;
+	public float parachuteOpenPitchVariation  = 0.1f;
+	public float parachuteLoopPitchVariation  = 0.1f;
+	public float parachuteClosePitchVariation = 0.1f;
+	
 	public AudioClip[] collisionAudioClips;
+	public AudioClip[] parachuteOpenAudioClips;
+	public AudioClip[] parachuteLoopAudioClips;
+	public AudioClip[] parachuteCloseAudioClips;
 	
 	/* Getting components. */
 	
 	[HideInInspector]
 	new public Rigidbody2D rigidbody2D;
-	private AudioSource audioSource;
+	private AudioSource collisionAudioSource;
+	private AudioSource parachuteAudioSource;
 	
 	/* Responding to collisions. */
 	
@@ -45,9 +54,9 @@ public class GGSheepComponent: MonoBehaviour {
 			this.rigidbody2D.AddForce(impulse, ForceMode2D.Impulse);
 			GGGameSceneComponent.instance.SheepWasHit(this);
 			
-			this.audioSource.pitch = 1.0f + Random.Range(-this.collisionPitchVariation, this.collisionPitchVariation);
-			this.audioSource.clip  = this.collisionAudioClips[random.Next(this.collisionAudioClips.Length)];
-			this.audioSource.Play();
+			this.collisionAudioSource.pitch = 1.0f + Random.Range(-this.collisionPitchVariation, this.collisionPitchVariation);
+			this.collisionAudioSource.clip  = this.collisionAudioClips[random.Next(this.collisionAudioClips.Length)];
+			this.collisionAudioSource.Play();
 		}
 	}
 	
@@ -62,15 +71,22 @@ public class GGSheepComponent: MonoBehaviour {
 		this.gameObject.layer        = 0;
 		
 		if (parachuteImmediately) {
-			this.DeployParachute();
+			this.DeployParachute(false);
 		}
 	}
 	
-	private void DeployParachute() {
+	private void DeployParachute(bool playAudio) {
 		this.isFalling                = false;
 		this.isParachuting            = true;
 		this.rigidbody2D.velocity    *= 0.75f;
 		this.rigidbody2D.gravityScale = 0.0f;
+		
+		if (playAudio) {
+			this.parachuteAudioSource.loop  = false;
+			this.parachuteAudioSource.pitch = 1.0f + Random.Range(-this.parachuteOpenPitchVariation, this.parachuteOpenPitchVariation);
+			this.parachuteAudioSource.clip  = this.parachuteOpenAudioClips[random.Next(this.parachuteOpenAudioClips.Length)];
+			this.parachuteAudioSource.Play();
+		}
 	}
 	
 	/* Updating. */
@@ -84,7 +100,7 @@ public class GGSheepComponent: MonoBehaviour {
 			this.fallTime += Time.deltaTime;
 			
 			if (this.fallTime > 0.7f) {
-				this.DeployParachute();
+				this.DeployParachute(true);
 			}
 		}
 		
@@ -104,7 +120,21 @@ public class GGSheepComponent: MonoBehaviour {
 			var screenPosition = Camera.main.WorldToViewportPoint(transform.position);
 			
 			if (screenPosition.y < -0.2f) {
-				GameObject.Destroy(this.gameObject);
+				if (this.parachuteAudioSource.loop) {
+					this.parachuteAudioSource.loop  = false;
+					this.parachuteAudioSource.pitch = 1.0f + Random.Range(-this.parachuteClosePitchVariation, this.parachuteClosePitchVariation);
+					this.parachuteAudioSource.clip  = this.parachuteCloseAudioClips[random.Next(this.parachuteCloseAudioClips.Length)];
+					this.parachuteAudioSource.Play();
+				}
+				else if (!this.parachuteAudioSource.isPlaying) {
+					GameObject.Destroy(this.gameObject);
+				}
+			}
+			else if (this.isParachuting && !this.parachuteAudioSource.isPlaying) {
+				this.parachuteAudioSource.loop  = true;
+				this.parachuteAudioSource.pitch = 1.0f + Random.Range(-this.parachuteLoopPitchVariation, this.parachuteLoopPitchVariation);
+				this.parachuteAudioSource.clip  = this.parachuteLoopAudioClips[random.Next(this.parachuteLoopAudioClips.Length)];
+				this.parachuteAudioSource.Play();
 			}
 		}
 	}
