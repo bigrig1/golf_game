@@ -45,12 +45,14 @@ public class GGInputComponent: MonoBehaviour {
 			this.ballHasBeenHit      = false;
 			
 			if (gameSceneComponent.ballComponent.isInHole) {
+				var currentHighScore = GGSaveData.GetHoleHighScoreCurrentMode();
 				gameSceneComponent.ballComponent.containingHole.GetComponent<Collider2D>().enabled = false;
 				gameSceneComponent.mapComponent.BuildNextMap();
 				gameSceneComponent.cameraComponent.MoveToNextMap();
 				gameSceneComponent.ballComponent.PersistPosition();
 				gameSceneComponent.ballComponent.undoPosition = new Vector3();
 				GGSaveData.SetCurrentMapIndex(gameSceneComponent.mapComponent.currentMapIndex);
+				GGSaveData.SetHoleHighScore((int)Mathf.Max(currentHighScore, gameSceneComponent.mapComponent.currentMapIndex + 1));
 				GGSaveData.DeleteSheepHitFlag((gameSceneComponent.mapComponent.currentMapIndex - 2) + "-0");
 				GGSaveData.DeleteSheepHitFlag((gameSceneComponent.mapComponent.currentMapIndex - 2) + "-1");
 				GGSaveData.DeleteSheepHitFlag((gameSceneComponent.mapComponent.currentMapIndex - 2) + "-2");

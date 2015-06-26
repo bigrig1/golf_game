@@ -5,6 +5,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GGMainMenuUIComponent: MonoBehaviour {
 	/* Initializing. */
@@ -13,6 +14,39 @@ public class GGMainMenuUIComponent: MonoBehaviour {
 		this.zenResetButton.SetActive(GGSaveData.HasSaveData(GGGameMode.Zen));
 		this.regularResetButton.SetActive(GGSaveData.HasSaveData(GGGameMode.Regular));
 		this.hardResetButton.SetActive(GGSaveData.HasSaveData(GGGameMode.Hard));
+		
+		if (GGSaveData.HasHighScore(GGGameMode.Zen)) {
+			this.zenHoleScoreLabel.GetComponent<Text>().text  = "" + GGSaveData.GetHoleHighScore(GGGameMode.Zen);
+			this.zenSheepScoreLabel.GetComponent<Text>().text = "" + GGSaveData.GetSheepHighScore(GGGameMode.Zen);
+		}
+		else {
+			this.zenHoleScoreIcon.SetActive(false);
+			this.zenSheepScoreIcon.SetActive(false);
+			this.zenHoleScoreLabel.SetActive(false);
+			this.zenSheepScoreLabel.SetActive(false);
+		}
+		
+		if (GGSaveData.HasHighScore(GGGameMode.Regular)) {
+			this.regularHoleScoreLabel.GetComponent<Text>().text  = "" + GGSaveData.GetHoleHighScore(GGGameMode.Regular);
+			this.regularSheepScoreLabel.GetComponent<Text>().text = "" + GGSaveData.GetSheepHighScore(GGGameMode.Regular);
+		}
+		else {
+			this.regularHoleScoreIcon.SetActive(false);
+			this.regularSheepScoreIcon.SetActive(false);
+			this.regularHoleScoreLabel.SetActive(false);
+			this.regularSheepScoreLabel.SetActive(false);
+		}
+		
+		if (GGSaveData.HasHighScore(GGGameMode.Hard)) {
+			this.hardHoleScoreLabel.GetComponent<Text>().text  = "" + GGSaveData.GetHoleHighScore(GGGameMode.Hard);
+			this.hardSheepScoreLabel.GetComponent<Text>().text = "" + GGSaveData.GetSheepHighScore(GGGameMode.Hard);
+		}
+		else {
+			this.hardHoleScoreIcon.SetActive(false);
+			this.hardSheepScoreIcon.SetActive(false);
+			this.hardHoleScoreLabel.SetActive(false);
+			this.hardSheepScoreLabel.SetActive(false);
+		}
 	}
 	
 	/* Accessing UI. */
@@ -20,6 +54,21 @@ public class GGMainMenuUIComponent: MonoBehaviour {
 	public GameObject zenResetButton;
 	public GameObject regularResetButton;
 	public GameObject hardResetButton;
+	
+	public GameObject zenHoleScoreIcon;
+	public GameObject zenSheepScoreIcon;
+	public GameObject zenHoleScoreLabel;
+	public GameObject zenSheepScoreLabel;
+	
+	public GameObject regularHoleScoreIcon;
+	public GameObject regularSheepScoreIcon;
+	public GameObject regularHoleScoreLabel;
+	public GameObject regularSheepScoreLabel;
+	
+	public GameObject hardHoleScoreIcon;
+	public GameObject hardSheepScoreIcon;
+	public GameObject hardHoleScoreLabel;
+	public GameObject hardSheepScoreLabel;
 	
 	/* Responding to button presses. */
 	

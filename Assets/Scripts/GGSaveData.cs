@@ -14,7 +14,12 @@ public abstract class GGSaveData {
 		return PlayerPrefs.HasKey(GGSaveData.GetScopedKeyForMode(mode, "Data Is Present"));
 	}
 	
+	public static bool HasHighScore(GGGameMode mode) {
+		return PlayerPrefs.GetInt(GGSaveData.GetScopedKeyForMode(mode, "Hole High Score")) > 0;
+	}
+	
 	public static void DeleteSaveData(GGGameMode mode) {
+		// Don't clear out high scores!
 		PlayerPrefs.DeleteKey(GGSaveData.GetScopedKeyForMode(mode, "Data Is Present"));
 		PlayerPrefs.DeleteKey(GGSaveData.GetScopedKeyForMode(mode, "Ball X"));
 		PlayerPrefs.DeleteKey(GGSaveData.GetScopedKeyForMode(mode, "Ball Y"));
@@ -90,6 +95,30 @@ public abstract class GGSaveData {
 		if (GGGameSceneComponent.mode != GGGameMode.Zen) {
 			PlayerPrefs.SetInt(GGSaveData.GetScopedKey("Seed"), seed);
 		}
+	}
+	
+	public static int GetHoleHighScore(GGGameMode mode) {
+		return PlayerPrefs.GetInt(GGSaveData.GetScopedKeyForMode(mode, "Hole High Score"), 0);
+	}
+	
+	public static int GetHoleHighScoreCurrentMode() {
+		return PlayerPrefs.GetInt(GGSaveData.GetScopedKey("Hole High Score"), 0);
+	}
+	
+	public static void SetHoleHighScore(int score) {
+		PlayerPrefs.SetInt(GGSaveData.GetScopedKey("Hole High Score"), score);
+	}
+	
+	public static int GetSheepHighScoreCurrentMode() {
+		return PlayerPrefs.GetInt(GGSaveData.GetScopedKey("Sheep High Score"), 0);
+	}
+	
+	public static int GetSheepHighScore(GGGameMode mode) {
+		return PlayerPrefs.GetInt(GGSaveData.GetScopedKeyForMode(mode, "Sheep High Score"), 0);
+	}
+	
+	public static void SetSheepHighScore(int count) {
+		PlayerPrefs.SetInt(GGSaveData.GetScopedKey("Sheep High Score"), count);
 	}
 	
 	private static string GetScopedKey(string key) {
