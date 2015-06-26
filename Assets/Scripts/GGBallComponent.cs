@@ -30,6 +30,7 @@ public class GGBallComponent: MonoBehaviour {
 	
 	public float grassPitchVariation = 0.0f;
 	public float rockPitchVariation  = 0.0f;
+	public float wallPitchVariation  = 0.0f;
 	public float dirtPitchVariation  = 0.0f;
 	public float sandPitchVariation  = 0.0f;
 	public float sheepPitchVariation = 0.0f;
@@ -41,6 +42,7 @@ public class GGBallComponent: MonoBehaviour {
 	
 	public AudioClip[] grassAudioClips;
 	public AudioClip[] rockAudioClips;
+	public AudioClip[] wallAudioClips;
 	public AudioClip[] dirtAudioClips;
 	public AudioClip[] sandAudioClips;
 	public AudioClip[] sheepAudioClips;
@@ -188,7 +190,7 @@ public class GGBallComponent: MonoBehaviour {
 				
 				switch (colliderName) {
 					case "Ground": this.collisionAudioSource.clip = this.GetRandomAudioClip(this.grassAudioClips); pitchVariation += this.grassPitchVariation; break;
-					case "Wall":   this.collisionAudioSource.clip = this.GetRandomAudioClip(this.rockAudioClips);  pitchVariation += this.rockPitchVariation;  break;
+					case "Wall":   this.collisionAudioSource.clip = this.GetRandomAudioClip(this.wallAudioClips);  pitchVariation += this.wallPitchVariation;  break;
 					case "Dirt":   this.collisionAudioSource.clip = this.GetRandomAudioClip(this.dirtAudioClips);  pitchVariation += this.dirtPitchVariation;  break;
 					case "Grass":  this.collisionAudioSource.clip = this.GetRandomAudioClip(this.grassAudioClips); pitchVariation += this.grassPitchVariation; break;
 					case "Sand":   this.collisionAudioSource.clip = this.GetRandomAudioClip(this.sandAudioClips);  pitchVariation += this.sandPitchVariation;  break;
