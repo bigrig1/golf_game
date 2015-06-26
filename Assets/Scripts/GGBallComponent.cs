@@ -239,24 +239,29 @@ public class GGBallComponent: MonoBehaviour {
 	/* Spawning particles. */
 	
 	private void SpawnParticles(float magnitude, string surfaceType) {
-		var particleCount = (int)Mathf.Round(Mathf.Clamp(magnitude / 3.75f, 2.0f, 6.0f));
-		Color color;
+		var particleCount = (int)Mathf.Round(Mathf.Clamp(magnitude / 5.0f, 1.0f, 4.0f));
+		var spriteName    = "";
 		
 		switch (surfaceType) {
-			case "Dirt": color = new Color(0.7f,  0.475f, 0.1f); break;
+			case "Dirt": spriteName = "particle_dirt"; break;
 			case "Plug":
 			case "Ground":
-			case "Grass": color = new Color(0.35f, 0.6f, 0.1f);  break;
-			case "Sand":  color = new Color(0.85f, 0.8f, 0.65f); break;
+			case "Grass": spriteName = "particle_grass"; break;
+			case "Sand":  spriteName = "particle_sand"; break;
+			case "Rock":  spriteName = "particle_rocks_light"; break;
+			case "Wall":  spriteName = "particle_rocks_dark"; break;
 			default:      return;
 		}
 		
+		var spriteFrames = Resources.LoadAll<Sprite>("Sprites/" + spriteName);
+		
 		for (var i = 0; i < particleCount; i += 1) {
+			var spriteIndex             = (int)Mathf.Round(Random.Range(0.0f, 2.0f));
 			var particle                = GameObject.Instantiate(Resources.Load("Prefabs/Particle")) as GameObject;
-			var renderer                = particle.GetComponent<Renderer>();
+			var renderer                = particle.GetComponent<SpriteRenderer>();
 			var rigidbody2D             = particle.GetComponent<Rigidbody2D>();
 			var force                   = new Vector2(Random.Range(-2.0f, 2.0f), Random.Range(0.0f, 2.0f));
-			renderer.material.color     = color;
+			renderer.sprite             = spriteFrames[spriteIndex];
 			particle.transform.position = this.transform.position;
 			rigidbody2D.AddForce(force, ForceMode2D.Impulse);
 		}

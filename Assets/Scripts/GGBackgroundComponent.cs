@@ -11,6 +11,7 @@ public class GGBackgroundComponent: MonoBehaviour {
 	
 	public void Start() {
 		this.CreateClouds();
+		this.CreateBird();
 	}
 	
 	/* Managing clouds. */
@@ -47,6 +48,41 @@ public class GGBackgroundComponent: MonoBehaviour {
 		}
 	}
 	
+	/* Managing birbs. */
+	
+	private GameObject bird;
+	private Rigidbody2D birdRigidbody;
+	private float timeToBird;
+	private float birdDirection = 0.0f;
+	
+	private void CreateBird() {
+		this.bird          = GameObject.Instantiate(Resources.Load("Prefabs/Bird")) as GameObject;
+		this.birdRigidbody = this.bird.GetComponent<Rigidbody2D>();
+		this.ResetBird();
+	}
+	
+	private void ResetBird() {
+		this.timeToBird    = Random.Range(15.0f, 60.0f);
+		this.birdDirection = 0.0f;
+		this.bird.SetActive(false);
+	}
+	
+	private void LaunchBird() {
+		this.bird.SetActive(true);
+		var scroll             = 0.0f;
+		var gameSceneComponent = GGGameSceneComponent.instance;
+		
+		if (gameSceneComponent != null && gameSceneComponent.cameraComponent != null) {
+			scroll = gameSceneComponent.cameraComponent.scroll;
+		}
+		
+		var baseScale                  = 0.4f;
+		this.birdDirection             = Random.value > 0.5f ? 1.0f : -1.0f;
+		this.birdRigidbody.velocity    = new Vector2(Random.Range(2.0f, 3.75f) * this.birdDirection, 0.0f);
+		this.bird.transform.position   = new Vector3(21.0f * -this.birdDirection, scroll + GGMapComponent.usableScreenHeight * Random.Range(0.15f, 0.85f) + 1.0f, 0.0f);
+		this.bird.transform.localScale = new Vector3(baseScale * -this.birdDirection, baseScale, baseScale);
+	}
+	
 	/* Updating. */
 	
 	public void FixedUpdate() {
@@ -78,6 +114,19 @@ public class GGBackgroundComponent: MonoBehaviour {
 				cloudComponent.yOffset       = scroll + GGMapComponent.usableScreenHeight + Random.Range(0.5f, 2.0f);
 				cloudComponent.yOffsetScroll = scroll;
 			}
+		}
+		
+		this.timeToBird -= Time.deltaTime;
+		
+		if (this.timeToBird <= 0.0f && this.birdDirection == 0.0f) {
+			this.LaunchBird();
+		}
+		
+		if (this.birdDirection < 0.0f && this.bird.transform.position.x < -21.0f) {
+			this.ResetBird();
+		}
+		else if (this.birdDirection > 0.0f && this.bird.transform.position.x > 21.0f) {
+			this.ResetBird();
 		}
 	}
 }

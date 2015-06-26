@@ -147,8 +147,10 @@ public class GGGameSceneComponent: MonoBehaviour {
 	public int sheepCount { get; private set; }
 	
 	public void SheepWasHit(GGSheepComponent sheepComponent) {
-		this.sheepCount += 1;
+		var currentHighScore = GGSaveData.GetSheepHighScoreCurrentMode();
+		this.sheepCount     += 1;
 		GGSaveData.SetSheepCount(this.sheepCount);
+		GGSaveData.SetSheepHighScore((int)Mathf.Max(currentHighScore, this.sheepCount));
 		GGSaveData.SetSheepHitFlag(sheepComponent.id);
 	}
 	
