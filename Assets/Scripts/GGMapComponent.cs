@@ -588,21 +588,30 @@ public class GGMapComponent: MonoBehaviour {
 	/* Setting ball positions. */
 	
 	public void SetInitialBallPosition() {
-		GGPlatformComponent lowestPlatformComponent = null;
-		var lowestY                                 = float.MaxValue;
+		GGPlatformComponent lowestPlatformComponentWithRock    = null;
+		GGPlatformComponent lowestPlatformComponentWithoutRock = null;
+		var lowestYWithRock                                    = float.MaxValue;
+		var lowestYWithoutRock                                 = float.MaxValue;
 		
 		foreach (var platformComponent in this.platformComponents) {
 			var currentLowestY = platformComponent.highestY;
 			
-			if (currentLowestY < lowestY) {
-				lowestPlatformComponent = platformComponent;
-				lowestY                 = currentLowestY;
+			if (currentLowestY < lowestYWithRock) {
+				lowestPlatformComponentWithRock = platformComponent;
+				lowestYWithRock                 = currentLowestY;
+			}
+			
+			if (!platformComponent.hasRock && currentLowestY < lowestYWithoutRock) {
+				lowestPlatformComponentWithoutRock = platformComponent;
+				lowestYWithoutRock                 = currentLowestY;
 			}
 		}
 		
-		var ballTransform      = GGGameSceneComponent.instance.ballComponent.transform;
-		var x                  = UnityEngine.Random.Range(lowestPlatformComponent.lowestX + 0.2f, lowestPlatformComponent.highestX - 0.2f);
-		ballTransform.position = new Vector3(x, lowestY + 0.1f, 0.0f);
+		var lowestPlatformComponent = lowestPlatformComponentWithoutRock ?? lowestPlatformComponentWithRock;
+		var lowestY                 = lowestPlatformComponentWithoutRock != null ? lowestYWithoutRock : lowestYWithRock;
+		var ballTransform           = GGGameSceneComponent.instance.ballComponent.transform;
+		var x                       = UnityEngine.Random.Range(lowestPlatformComponent.lowestX + 0.2f, lowestPlatformComponent.highestX - 0.2f);
+		ballTransform.position      = new Vector3(x, lowestY + 0.1f, 0.0f);
 	}
 	
 	/* Getting configuration values. */

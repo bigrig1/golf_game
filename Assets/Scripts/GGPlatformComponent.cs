@@ -19,13 +19,15 @@ public class GGPlatformComponent: MonoBehaviour {
 				case "Grass": collider.sharedMaterial = physicsComponent.grassMaterial; break;
 				case "Dirt":  collider.sharedMaterial = physicsComponent.dirtMaterial;  break;
 				case "Sand":  collider.sharedMaterial = physicsComponent.sandMaterial;  break;
-				case "Rock":  collider.sharedMaterial = physicsComponent.rockMaterial;  break;
+				case "Rock":  collider.sharedMaterial = physicsComponent.rockMaterial;  this.hasRock = true; break;
 				default:      Debug.LogError("Unhandled platform child name: " + name); break;
 			}
 		}
 		
 		this.LoadCollidersIfNeeded();
 	}
+	
+	public bool hasRock = false;
 	
 	/* Getting child objects and components. */
 	
