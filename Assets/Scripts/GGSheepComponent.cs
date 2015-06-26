@@ -24,6 +24,9 @@ public class GGSheepComponent: MonoBehaviour {
 	[HideInInspector]
 	public bool managesVelocity = true;
 	
+	[HideInInspector]
+	public bool playsAudio = true;
+	
 	// The sheep's ID.
 	[HideInInspector]
 	public string id = "";
@@ -81,7 +84,7 @@ public class GGSheepComponent: MonoBehaviour {
 		this.rigidbody2D.velocity    *= 0.75f;
 		this.rigidbody2D.gravityScale = 0.0f;
 		
-		if (playAudio) {
+		if (this.playsAudio && playAudio) {
 			this.parachuteAudioSource.loop  = false;
 			this.parachuteAudioSource.pitch = 1.0f + Random.Range(-this.parachuteOpenPitchVariation, this.parachuteOpenPitchVariation);
 			this.parachuteAudioSource.clip  = this.parachuteOpenAudioClips[random.Next(this.parachuteOpenAudioClips.Length)];
@@ -120,17 +123,17 @@ public class GGSheepComponent: MonoBehaviour {
 			var screenPosition = Camera.main.WorldToViewportPoint(transform.position);
 			
 			if (screenPosition.y < -0.2f) {
-				if (this.parachuteAudioSource.loop) {
+				if (this.playsAudio && this.parachuteAudioSource.loop) {
 					this.parachuteAudioSource.loop  = false;
 					this.parachuteAudioSource.pitch = 1.0f + Random.Range(-this.parachuteClosePitchVariation, this.parachuteClosePitchVariation);
 					this.parachuteAudioSource.clip  = this.parachuteCloseAudioClips[random.Next(this.parachuteCloseAudioClips.Length)];
 					this.parachuteAudioSource.Play();
 				}
-				else if (!this.parachuteAudioSource.isPlaying) {
+				else if (!this.playsAudio || !this.parachuteAudioSource.isPlaying) {
 					GameObject.Destroy(this.gameObject);
 				}
 			}
-			else if (this.isParachuting && !this.parachuteAudioSource.isPlaying) {
+			else if (this.playsAudio && this.isParachuting && !this.parachuteAudioSource.isPlaying) {
 				this.parachuteAudioSource.loop  = true;
 				this.parachuteAudioSource.pitch = 1.0f + Random.Range(-this.parachuteLoopPitchVariation, this.parachuteLoopPitchVariation);
 				this.parachuteAudioSource.clip  = this.parachuteLoopAudioClips[random.Next(this.parachuteLoopAudioClips.Length)];

@@ -24,6 +24,7 @@ public class GGSheepSpawnerComponent: MonoBehaviour {
 		for (var i = 0; i < sheepCount; i += 1) {
 			var sheep                      = GameObject.Instantiate(Resources.Load("Prefabs/Sheep")) as GameObject;
 			var sheepComponent             = sheep.GetComponent<GGSheepComponent>();
+			sheepComponent.playsAudio      = false;
 			sheepComponent.managesVelocity = false;
 			this.ResetSheep(sheep, (float)i * 13.0f);
 			sheepComponent.MakeFall(true);
