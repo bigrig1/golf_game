@@ -11,21 +11,30 @@ public class GGSheepComponent: MonoBehaviour {
 	
 	public void Awake() {
 		this.rigidbody2D = this.GetComponent<Rigidbody2D>();
+		this.audioSource = this.transform.Find("Audio").GetComponent<AudioSource>();
 	}
 	
 	/* Configuring the sheep. */
 	
 	// Whether or not this is a hanging sheep.
+	[HideInInspector]
 	public bool isHanging = false;
 	
+	[HideInInspector]
 	public bool managesVelocity = true;
 	
 	// The sheep's ID.
+	[HideInInspector]
 	public string id = "";
+	
+	public float collisionPitchVariation = 0.1f;
+	public AudioClip[] collisionAudioClips;
 	
 	/* Getting components. */
 	
+	[HideInInspector]
 	new public Rigidbody2D rigidbody2D;
+	private AudioSource audioSource;
 	
 	/* Responding to collisions. */
 	
@@ -35,8 +44,14 @@ public class GGSheepComponent: MonoBehaviour {
 			var impulse = new Vector2(-collision.relativeVelocity.x, Mathf.Max(0.0f, -collision.relativeVelocity.y)) * 0.45f;
 			this.rigidbody2D.AddForce(impulse, ForceMode2D.Impulse);
 			GGGameSceneComponent.instance.SheepWasHit(this);
+			
+			this.audioSource.pitch = 1.0f + Random.Range(-this.collisionPitchVariation, this.collisionPitchVariation);
+			this.audioSource.clip  = this.collisionAudioClips[random.Next(this.collisionAudioClips.Length)];
+			this.audioSource.Play();
 		}
 	}
+	
+	private System.Random random = new System.Random();
 	
 	/* Making sheep fall. */
 	
