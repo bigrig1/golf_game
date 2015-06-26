@@ -11,6 +11,8 @@ public class GGMainMenuUIComponent: MonoBehaviour {
 	/* Initializing. */
 	
 	public void Start() {
+		this.VerifySaveData();
+		
 		this.zenResetButton.SetActive(GGSaveData.HasSaveData(GGGameMode.Zen));
 		this.regularResetButton.SetActive(GGSaveData.HasSaveData(GGGameMode.Regular));
 		this.hardResetButton.SetActive(GGSaveData.HasSaveData(GGGameMode.Hard));
@@ -46,6 +48,16 @@ public class GGMainMenuUIComponent: MonoBehaviour {
 			this.hardSheepScoreIcon.SetActive(false);
 			this.hardHoleScoreLabel.SetActive(false);
 			this.hardSheepScoreLabel.SetActive(false);
+		}
+	}
+	
+	private void VerifySaveData() {
+		if (GGSaveData.HasSaveData(GGGameMode.Regular) && GGSaveData.GetRemainingStrokeCountMode(GGGameMode.Regular) <= 0) {
+			GGSaveData.DeleteSaveData(GGGameMode.Regular);
+		}
+		
+		if (GGSaveData.HasSaveData(GGGameMode.Hard) && GGSaveData.GetRemainingStrokeCountMode(GGGameMode.Hard) <= 0) {
+			GGSaveData.DeleteSaveData(GGGameMode.Hard);
 		}
 	}
 	

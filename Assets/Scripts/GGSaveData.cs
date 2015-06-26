@@ -81,6 +81,10 @@ public abstract class GGSaveData {
 		return PlayerPrefs.GetInt(GGSaveData.GetScopedKey("Remaining Stroke Count"), defaultValue);
 	}
 	
+	public static int GetRemainingStrokeCountMode(GGGameMode mode) {
+		return PlayerPrefs.GetInt(GGSaveData.GetScopedKeyForMode(mode, "Remaining Stroke Count"), 0);
+	}
+	
 	public static void SetRemainingStrokeCount(int remainingStrokeCount) {
 		if (GGGameSceneComponent.mode != GGGameMode.Zen) {
 			PlayerPrefs.SetInt(GGSaveData.GetScopedKey("Remaining Stroke Count"), remainingStrokeCount);
