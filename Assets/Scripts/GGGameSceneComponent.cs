@@ -136,8 +136,7 @@ public class GGGameSceneComponent: MonoBehaviour {
 	/* Accessing game state. */
 	
 	// The game's base seed for the RNG.
-	[HideInInspector]
-	public int seed = 168403912;
+	public int seed;
 	
 	// The number of strokes remaining. Only relevant in normal/hard modes.
 	[HideInInspector]
