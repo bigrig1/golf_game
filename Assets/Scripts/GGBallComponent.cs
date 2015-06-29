@@ -49,6 +49,8 @@ public class GGBallComponent: MonoBehaviour {
 	
 	public AudioClip[] holeAudioClips;
 	
+	private bool isOffScreen = false;
+	
 	/* Accessing components. */
 	
 	new private Rigidbody2D rigidbody2D;
@@ -175,18 +177,25 @@ public class GGBallComponent: MonoBehaviour {
 	public void OnCollisionEnter2D(Collision2D collision) {
 		var magnitude = collision.relativeVelocity.magnitude;
 		
-		if (magnitude > this.collisionTriggerForce) {
+		if (magnitude > this.collisionTriggerForce && !this.isOffScreen) {
 			var colliderName = collision.collider.gameObject.name;
 			
 			if (this.shouldCancelNextCollisionAudioEvent) {
 				this.shouldCancelNextCollisionAudioEvent = false;
 			}
 			else {
+				var minCollisionVolume = this.minCollisionVolume;
+				var maxCollisionVolume = this.maxCollisionVolume;
+				
+				if (colliderName == "Wall") {
+					minCollisionVolume *= 0.35f;
+					maxCollisionVolume *= 0.35f;
+				}
 				
 				var forceRange                   = this.maxCollisionVolumeForce - this.minCollisionVolumeForce;
-				var volumeRange                  = this.maxCollisionVolume - this.minCollisionVolume;
+				var volumeRange                  = maxCollisionVolume - minCollisionVolume;
 				var pitchVariation               = this.collisionPitchVariation;
-				this.collisionAudioSource.volume = this.minCollisionVolume + Mathf.Clamp01((magnitude - this.minCollisionVolumeForce) / forceRange) * volumeRange;
+				this.collisionAudioSource.volume = minCollisionVolume + Mathf.Clamp01((magnitude - this.minCollisionVolumeForce) / forceRange) * volumeRange;
 				
 				switch (colliderName) {
 					case "Ground": this.collisionAudioSource.clip = this.GetRandomAudioClip(this.grassAudioClips); pitchVariation += this.grassPitchVariation; break;
@@ -294,6 +303,7 @@ public class GGBallComponent: MonoBehaviour {
 			}
 			
 			if (screenPosition.y < 0.0f) {
+				this.isOffScreen        = true;
 				this.durationOffScreen += Time.deltaTime;
 				
 				if (durationOffScreen > 1.0f) {
@@ -302,6 +312,7 @@ public class GGBallComponent: MonoBehaviour {
 				}
 			}
 			else {
+				this.isOffScreen       = false;
 				this.durationOffScreen = 0.0f;
 			}
 		}
